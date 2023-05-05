@@ -71,7 +71,7 @@ class FilmValidatorTest {
     }
 
     @Test
-    void shouldThrowExceptionIfReleaseDateIsBefore28Dec1895() {
+    void shouldThrowExceptionWhenReleaseDateIsBefore28Dec1895() {
         film = new Film("film", "Description",
                 LocalDate.of(1895, 12, 27), 2000);
 
