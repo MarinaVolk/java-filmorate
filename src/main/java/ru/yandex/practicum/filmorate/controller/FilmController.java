@@ -2,9 +2,7 @@ package ru.yandex.practicum.filmorate.controller;/* # parse("File Header.java")*
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +21,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FilmController {
 
     private Map<Integer, Film> films = new ConcurrentHashMap<>();
-    FilmValidator validator = new FilmValidator();
-    Integer filmId = 0;
 
     // добавление фильма
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
         log.info("Запрос на добавление фильма - {}", film.getName());
-        validator.isValid(film);
-        film.setId(++filmId);
         films.put(film.getId(), film);
         return film;
     }
@@ -40,10 +34,6 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
         log.info("Запрос на обновление фильма - {}", film.getName());
-        if (!films.containsKey(film.getId())) {
-            throw new ValidationException("Такого фильма не сушествует.");
-        }
-        films.remove(film.getId());
         films.put(film.getId(), film);
         return film;
     }
