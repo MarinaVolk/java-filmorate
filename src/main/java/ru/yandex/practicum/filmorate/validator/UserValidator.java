@@ -16,7 +16,7 @@ public class UserValidator {
     public boolean isValid(User user) throws ValidationException {
         emailValidator(user.getEmail());
         loginValidator(user.getLogin());
-        BirthDateValidator(user.getBirthday());
+        BirthdateValidator(user.getBirthday());
 
         if (user.getName() == null) {
             user.setName(user.getLogin());
@@ -45,7 +45,7 @@ public class UserValidator {
         return true;
     }
 
-    private boolean BirthDateValidator(LocalDate birthDate) throws ValidationException {
+    private boolean BirthdateValidator(LocalDate birthDate) throws ValidationException {
         if (birthDate.isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }
