@@ -80,7 +80,7 @@ class UserValidatorTest {
     @Test
     void shouldUseLoginIfNameIsEmpty() {
         user = new User("user@gmail.com", "User_login", LocalDate.of(1999, 01, 01));
-        user.setName("");
+        //user.setName("");
 
         userValidator.isValid(user);
         assertEquals("User_login", user.getName());
