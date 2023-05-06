@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;/* # parse("File Header.java")*
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
@@ -39,6 +40,9 @@ public class UserController {
     @PutMapping
     public User updateUser(@RequestBody User user) {
         log.info("Запрос на обновление пользователя - {}", user.getEmail());
+        if (!users.containsKey(user.getId())) {
+            throw new ValidationException("Такого пользователя не сушествует.");
+        }
         users.remove(user.getId());
         users.put(user.getId(), user);
         return user;
