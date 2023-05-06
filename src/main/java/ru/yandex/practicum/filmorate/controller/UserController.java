@@ -39,6 +39,7 @@ public class UserController {
     @PutMapping
     public User updateUser(@RequestBody User user) {
         log.info("Запрос на обновление пользователя - {}", user.getEmail());
+        users.remove(user.getId());
         users.put(user.getId(), user);
         return user;
     }

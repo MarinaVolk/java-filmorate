@@ -39,6 +39,7 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
         log.info("Запрос на обновление фильма - {}", film.getName());
+        films.remove(film.getId());
         films.put(film.getId(), film);
         return film;
     }
