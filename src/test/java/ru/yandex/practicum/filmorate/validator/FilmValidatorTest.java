@@ -19,14 +19,6 @@ class FilmValidatorTest {
     }
 
     @Test
-    void validatorWorksCorrectlyWithProperFields() throws ValidationException {
-        film = new Film("film", "DescriptionFilm",
-                LocalDate.of(2000, 01, 01), 2000);
-
-        assertTrue(filmValidator.isValid(film));
-    }
-
-    @Test
     void shouldThrowExceptionIfNameIsEmpty() throws ValidationException {
         film = new Film("", "Description",
                 LocalDate.of(2000, 01, 01), 2000);

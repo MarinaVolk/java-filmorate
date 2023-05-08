@@ -14,44 +14,38 @@ import java.time.LocalDate;
  */
 public class FilmValidator {
 
-    public boolean isValid(Film film) throws ValidationException {
+    public void isValid(Film film) throws ValidationException {
         nameValidator(film.getName());
         descriptionValidator(film.getDescription());
         releaseDateValidator(film.getReleaseDate());
         durationValidator(film.getDuration());
-        return true;
     }
 
-    private boolean nameValidator(String name) throws ValidationException {
+    private void nameValidator(String name) throws ValidationException {
         if (!StringUtils.hasText(name)) {
             throw new ValidationException("Название фильма не может быть пустым.");
         }
-        return true;
     }
 
-    private boolean descriptionValidator(String description) throws ValidationException {
+    private void descriptionValidator(String description) throws ValidationException {
         if (!StringUtils.hasText(description)) {
             throw new ValidationException("Описание фильма не может быть пустым.");
         }
-
         if (description.length() > 200) {
             throw new ValidationException("Описание фильма не может превышать 200 символов.");
         }
-        return true;
     }
 
-    private boolean releaseDateValidator(LocalDate releaseDate) throws ValidationException {
+    private void releaseDateValidator(LocalDate releaseDate) throws ValidationException {
         if (releaseDate.isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года.");
         }
-        return true;
     }
 
-    private boolean durationValidator(int duration) throws ValidationException {
+    private void durationValidator(int duration) throws ValidationException {
         if (duration <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
-        return true;
     }
 
 }

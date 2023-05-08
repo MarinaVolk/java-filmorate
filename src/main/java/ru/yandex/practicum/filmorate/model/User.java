@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;/* # parse("File Header.java")*/
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -18,8 +19,11 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 public class User {
     private Integer id;
-    private final String email;
-    private final String login;
+    @NonNull
+    private String email;
+    @NonNull
+    private String login;
     private String name;
-    private final LocalDate birthday;
+    @NonNull
+    private LocalDate birthday;
 }

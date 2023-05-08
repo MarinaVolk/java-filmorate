@@ -19,14 +19,6 @@ class UserValidatorTest {
     }
 
     @Test
-    void validatorWorksCorrectlyWithProperFields() throws ValidationException {
-        user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
-        user.setName("Пользователь");
-
-        assertTrue(userValidator.isValid(user));
-    }
-
-    @Test
     void shouldThrowExceptionWhenEmailIsEmpty() {
         user = new User("", "user", LocalDate.of(1999, 01, 01));
 
@@ -80,7 +72,6 @@ class UserValidatorTest {
     @Test
     void shouldUseLoginIfNameIsEmpty() {
         user = new User("user@gmail.com", "User_login", LocalDate.of(1999, 01, 01));
-        //user.setName("");
 
         userValidator.isValid(user);
         assertEquals("User_login", user.getName());

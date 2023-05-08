@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;/* # parse("File Header.java")*
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
@@ -23,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserController {
 
     private Map<Integer, User> users = new ConcurrentHashMap<>();
-    UserValidator validator = new UserValidator();
-    Integer userId = 0;
+    private UserValidator validator = new UserValidator();
+    private Integer userId = 0;
 
     // создание пользователя
     @PostMapping
@@ -40,8 +41,9 @@ public class UserController {
     @PutMapping
     public User updateUser(@RequestBody User user) {
         log.info("Запрос на обновление пользователя - {}", user.getEmail());
+        validator.isValid(user);
         if (!users.containsKey(user.getId())) {
-            throw new ValidationException("Такого пользователя не сушествует.");
+            throw new NotFoundException("Такого пользователя не сушествует.");
         }
         users.remove(user.getId());
         users.put(user.getId(), user);

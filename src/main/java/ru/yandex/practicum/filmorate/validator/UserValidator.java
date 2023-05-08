@@ -13,7 +13,7 @@ import java.time.LocalDate;
  * Description:
  */
 public class UserValidator {
-    public boolean isValid(User user) throws ValidationException {
+    public void isValid(User user) throws ValidationException {
         emailValidator(user.getEmail());
         loginValidator(user.getLogin());
         birthDateValidator(user.getBirthday());
@@ -21,35 +21,30 @@ public class UserValidator {
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
-
-        return true;
     }
 
-    private boolean emailValidator(String email) throws ValidationException {
+    private void emailValidator(String email) throws ValidationException {
         if (!StringUtils.hasText(email)) {
             throw new ValidationException("Электронная почта не может быть пустой.");
         }
         if (!email.contains("@")) {
             throw new ValidationException("Электронная почта должна содержать символ \"@\".");
         }
-        return true;
     }
 
-    private boolean loginValidator(String login) throws ValidationException {
+    private void loginValidator(String login) throws ValidationException {
         if (!StringUtils.hasText(login)) {
             throw new ValidationException("Логин не может быть пустым.");
         }
         if (login.contains(" ")) {
             throw new ValidationException("Логин не может содержать пробелы.");
         }
-        return true;
     }
 
-    private boolean birthDateValidator(LocalDate birthDate) throws ValidationException {
+    private void birthDateValidator(LocalDate birthDate) throws ValidationException {
         if (birthDate.isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }
-        return true;
     }
 
 }
