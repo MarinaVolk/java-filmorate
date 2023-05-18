@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -91,7 +92,8 @@ public class UserService {
 
         Set<Integer> friendsOfUser1 = user1.getFriends();
         Set<Integer> friendsOfUser2 = user2.getFriends();
-        List<User> commonFriends = null;
+        List<User> commonFriends = new ArrayList<>();
+
         for (Integer userId: friendsOfUser1) {
             if (friendsOfUser2.contains(userId)) {
                 commonFriends.add(userStorage.getUserById(userId));
