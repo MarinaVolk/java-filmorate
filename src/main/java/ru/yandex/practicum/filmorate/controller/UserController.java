@@ -38,7 +38,7 @@ public class UserController {
         user.setId(++userId);
         userStorage.addUser(user);  //users.put(user.getId(), user); // storage
         log.info("Запрос на создание пользователя - {}", user.getEmail());
-        return userService.createUser(user); // storage
+        return user; // storage
     }
 
     // обновление пользователя

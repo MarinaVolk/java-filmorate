@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage;/* # parse("File Header.java")*/
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import java.util.ArrayList;
 import java.util.List;
