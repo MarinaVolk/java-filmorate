@@ -27,6 +27,7 @@ public class UserService {
     private final UserStorage userStorage;
     private final UserValidator userValidator;
     //private final FilmService filmService;
+    private Integer userId = 0;
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -34,6 +35,13 @@ public class UserService {
         //this.filmService = filmService;
         userValidator = new UserValidator();
     }
+/*
+    public User createUser(User user) {
+        userValidator.isValid(user);
+        user.setId(++userId);
+        return userStorage.addUser(user); //users.put(user.getId(), user); // storage
+    }  */
+
 
     public void addFriend(Integer id, Integer friendId) {
         if (id < 1 || friendId < 1) {

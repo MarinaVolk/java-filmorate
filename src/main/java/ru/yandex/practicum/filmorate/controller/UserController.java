@@ -27,17 +27,18 @@ public class UserController {
     private Map<Integer, User> users = new ConcurrentHashMap<>();
     private UserValidator validator = new UserValidator();
     private InMemoryUserStorage userStorage = new InMemoryUserStorage();
-    private UserService userService;
+    private UserService userService = new UserService(userStorage);
     private Integer userId = 0;
 
     // создание пользователя
     @PostMapping
     public User createUser(@RequestBody User user) {
+        //userService.createUser(user);
         validator.isValid(user);
         user.setId(++userId);
-        users.put(user.getId(), user); // storage
+        userStorage.addUser(user);  //users.put(user.getId(), user); // storage
         log.info("Запрос на создание пользователя - {}", user.getEmail());
-        return user; // storage
+        return userService.createUser(user); // storage
     }
 
     // обновление пользователя
@@ -47,8 +48,10 @@ public class UserController {
         if (!users.containsKey(user.getId())) {
             throw new NotFoundException("Такого пользователя не сушествует.");
         }
-        users.remove(user.getId()); // storage
-        users.put(user.getId(), user); // storage
+        //users.remove(user.getId()); // storage
+        userStorage.deleteUser(user.getId());
+        //users.put(user.getId(), user); // storage
+        userStorage.addUser(user);
         log.info("Запрос на обновление пользователя - {}", user.getEmail());
         return user; // storage
     }

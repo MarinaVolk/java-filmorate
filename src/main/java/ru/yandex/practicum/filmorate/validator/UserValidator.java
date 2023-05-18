@@ -18,7 +18,7 @@ public class UserValidator {
         validateLogin(user.getLogin());
         validateBirthDate(user.getBirthday());
 
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
     }
