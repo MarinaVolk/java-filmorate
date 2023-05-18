@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * File Name: Film.java
@@ -22,4 +23,5 @@ public class Film {
     private final String description;
     private final LocalDate releaseDate;
     private final Integer duration;
+    private Set<Integer> likes;
 }

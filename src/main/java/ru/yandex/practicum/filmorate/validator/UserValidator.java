@@ -14,16 +14,16 @@ import java.time.LocalDate;
  */
 public class UserValidator {
     public void isValid(User user) throws ValidationException {
-        emailValidator(user.getEmail());
-        loginValidator(user.getLogin());
-        birthDateValidator(user.getBirthday());
+        validateEmail(user.getEmail());
+        validateLogin(user.getLogin());
+        validateBirthDate(user.getBirthday());
 
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
     }
 
-    private void emailValidator(String email) throws ValidationException {
+    private void validateEmail(String email) throws ValidationException {
         if (!StringUtils.hasText(email)) {
             throw new ValidationException("Электронная почта не может быть пустой.");
         }
@@ -32,7 +32,7 @@ public class UserValidator {
         }
     }
 
-    private void loginValidator(String login) throws ValidationException {
+    private void validateLogin(String login) throws ValidationException {
         if (!StringUtils.hasText(login)) {
             throw new ValidationException("Логин не может быть пустым.");
         }
@@ -41,7 +41,7 @@ public class UserValidator {
         }
     }
 
-    private void birthDateValidator(LocalDate birthDate) throws ValidationException {
+    private void validateBirthDate(LocalDate birthDate) throws ValidationException {
         if (birthDate.isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }
