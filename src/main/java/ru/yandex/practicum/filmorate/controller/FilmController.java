@@ -28,7 +28,7 @@ public class FilmController {
     private Map<Integer, Film> films = new ConcurrentHashMap<>();
     private FilmValidator validator = new FilmValidator();
     private InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
-    private FilmService filmService;
+    private FilmService filmService = new FilmService(filmStorage);
     private Integer filmId = 0;
 
     // добавление фильма

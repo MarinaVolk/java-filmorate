@@ -63,6 +63,10 @@ public class FilmService {
 
     public List<Film> getTopFilms() {
         List<Film> allFilms = filmStorage.getAllFilms();
+        //filmStorage.getAllFilms();
+        //if (user == null) {
+           // throw new NotFoundException("Такого пользователя не существует.");
+        //}
         /* for (int i = 0; i < allFilms.size(); i++) {
             if (allFilms.get(i).getLikes().size() < allFilms.get(i+1).getLikes().size()) {
                 allFilms.set(i+1, allFilms.get(i));
