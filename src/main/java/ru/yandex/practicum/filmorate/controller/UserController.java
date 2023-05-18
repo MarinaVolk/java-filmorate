@@ -71,7 +71,7 @@ public class UserController {
     // получение списка всех пользователей
     @GetMapping
     public List<User> getAll() {
-        return new ArrayList<>(users.values()); // storage
+        return new ArrayList<>(userStorage.getAllUsers()); // storage
     }
 
     @GetMapping("/{id}")
