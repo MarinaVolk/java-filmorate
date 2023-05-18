@@ -45,7 +45,7 @@ public class UserController {
     @PutMapping
     public User updateUser(@RequestBody User user) {
         validator.isValid(user);
-        if (!users.containsKey(user.getId())) {
+        if /*(!users.containsKey(user.getId()))*/ (!userStorage.getUserById(user.getId()).getId().equals(user.getId())) {
             throw new NotFoundException("Такого пользователя не сушествует.");
         }
         //users.remove(user.getId()); // storage
