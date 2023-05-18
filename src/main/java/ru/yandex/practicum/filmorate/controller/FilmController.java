@@ -81,7 +81,8 @@ public class FilmController {
     @GetMapping("/popular")
     public List<Film> topFilms(@RequestParam(required = false, defaultValue = "10") int count) {
         log.info("Получен запрос на получение топ фильмов count = {}", count);
-        List<Film> topCountFilms = filmService.getTopFilms()
+        List<Film> topCountFilms = new ArrayList<>(films.values())
+        //List<Film> topCountFilms = filmService.getTopFilms()
         .stream()
                 .limit(count)
                 .collect(Collectors.toList());
