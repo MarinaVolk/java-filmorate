@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;/* # parse("File Header.java")*/
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +19,23 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private Map<Integer, User> users = new ConcurrentHashMap<>();
+    private UserValidator validator = new UserValidator();
+    private Integer userId = 0;
 
     @Override
     public User addUser(User user) {
+        validator.isValid(user);
+        user.setId(++userId);
         users.put(user.getId(), user);
         return user;
     }
 
     @Override
     public User updateUser(User user) {
+        validator.isValid(user);
+        if (!users.containsKey(user.getId())) /*(!userStorage.getUserById(user.getId()).getId().equals(user.getId())) */ {
+            throw new NotFoundException("Такого пользователя не сушествует.");
+        }
         users.remove(user.getId());
         users.put(user.getId(), user);
         return user;
