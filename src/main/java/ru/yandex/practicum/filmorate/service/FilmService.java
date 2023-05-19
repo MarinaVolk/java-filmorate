@@ -61,7 +61,7 @@ public class FilmService {
         filmStorage.update(film);
     }
 
-    public List<Film> getTopFilms() {
+    public List<Film> getTopFilms(int count) {
         List<Film> allFilms = filmStorage.getAllFilms();
         //filmStorage.getAllFilms();
         //if (user == null) {
@@ -75,12 +75,12 @@ public class FilmService {
         Collections.sort(allFilms, new Comparator<Film>() {
             @Override
             public int compare(Film o1, Film o2) {
-                return o1.getLikes().size() - o2.getLikes().size();
+                return o2.getLikes().size() - o1.getLikes().size();
             }
         });
         List<Film> top10Films = allFilms
                 .stream()
-                .limit(10)
+                .limit(count)
                 .collect(Collectors.toList());
         return top10Films;
     }
