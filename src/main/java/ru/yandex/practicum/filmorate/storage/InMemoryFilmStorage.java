@@ -60,16 +60,4 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
-     /*@Override
-    public boolean contains(Integer id) {
-        return films.containsKey(id);
-    }  */
-     /*public static void main(String[] args) {
-         InMemoryFilmStorage storage = new InMemoryFilmStorage();
-         Film film1 = new Film("1", "1", LocalDate.of(2000, 12, 01), 1);
-         storage.add(film1);
-         storage.getFilmById(1);
-         System.out.println(storage.getFilmById(1));
-     }  */
-
 }

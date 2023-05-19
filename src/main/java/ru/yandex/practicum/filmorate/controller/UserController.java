@@ -23,35 +23,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserController {
 
     private Map<Integer, User> users = new ConcurrentHashMap<>();
-    //private UserValidator validator = new UserValidator();
     private InMemoryUserStorage userStorage = new InMemoryUserStorage();
     private UserService userService = new UserService(userStorage);
-    //private Integer userId = 0;
 
     // создание пользователя
     @PostMapping
     public User createUser(@RequestBody User user) {
-        //userService.createUser(user);
-        //validator.isValid(user);
-        //user.setId(++userId);
-        //userStorage.addUser(user);  //users.put(user.getId(), user); // storage
         log.info("Запрос на создание пользователя - {}", user.getEmail());
-        return userStorage.addUser(user); // storage
+        return userStorage.addUser(user);
     }
 
     // обновление пользователя
     @PutMapping
     public User updateUser(@RequestBody User user) {
-        //validator.isValid(user);
-        //if /*(!users.containsKey(user.getId()))*/ (!userStorage.getUserById(user.getId()).getId().equals(user.getId())) {
-        //    throw new NotFoundException("Такого пользователя не сушествует.");
-        //}
-        //users.remove(user.getId()); // storage
-        //userStorage.deleteUser(user.getId());
-        //users.put(user.getId(), user); // storage
-        //userStorage.addUser(user);
         log.info("Запрос на обновление пользователя - {}", user.getEmail());
-        return userStorage.updateUser(user); // storage
+        return userStorage.updateUser(user);
     }
 
     // PUT /users/{id}/friends/{friendId}
@@ -69,7 +55,7 @@ public class UserController {
     // получение списка всех пользователей
     @GetMapping
     public List<User> getAll() {
-        return new ArrayList<>(userStorage.getAllUsers()); // storage
+        return new ArrayList<>(userStorage.getAllUsers());
     }
 
     @GetMapping("/{id}")

@@ -19,30 +19,19 @@ import java.util.stream.Collectors;
  * Date: 2023-05-12,   11:10 PM (UTC+3)
  * Description:
  * добавление в друзья, удаление из друзей, вывод списка общих друзей.
- * Пока пользователям не надо одобрять заявки в друзья — добавляем сразу. Т
- * о есть если Лена стала другом Саши, то это значит, что Саша теперь друг Лены.
  */
 
 @Service
 public class UserService {
     private final UserStorage userStorage;
     private final UserValidator userValidator;
-    //private final FilmService filmService;
     private Integer userId = 0;
 
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
-        //this.filmService = filmService;
         userValidator = new UserValidator();
     }
-/*
-    public User createUser(User user) {
-        userValidator.isValid(user);
-        user.setId(++userId);
-        return userStorage.addUser(user); //users.put(user.getId(), user); // storage
-    }  */
-
 
     public void addFriend(Integer id, Integer friendId) {
         if (id < 1 || friendId < 1) {
@@ -94,7 +83,7 @@ public class UserService {
         Set<Integer> friendsOfUser2 = user2.getFriends();
         List<User> commonFriends = new ArrayList<>();
 
-        for (Integer userId: friendsOfUser1) {
+        for (Integer userId : friendsOfUser1) {
             if (friendsOfUser2.contains(userId)) {
                 commonFriends.add(userStorage.getUserById(userId));
             }

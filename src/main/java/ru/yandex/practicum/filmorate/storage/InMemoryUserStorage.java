@@ -33,7 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         validator.isValid(user);
-        if (!users.containsKey(user.getId())) /*(!userStorage.getUserById(user.getId()).getId().equals(user.getId())) */ {
+        if (!users.containsKey(user.getId())) {
             throw new NotFoundException("Такого пользователя не сушествует.");
         }
         users.remove(user.getId());
