@@ -22,19 +22,40 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
-    private final FilmValidator filmValidator;
+    private final FilmValidator validator;
 
     @Autowired
     public FilmService(FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
-        filmValidator = new FilmValidator();
+        validator = new FilmValidator();
+    }
+
+    public Film add(Film film) {
+        validator.isValid(film);
+        filmStorage.add(film);
+        return film;
+    }
+
+    public Film update(Film film) {
+        validator.isValid(film);
+        filmStorage.update(film);
+        return film;
+    }
+
+    public List<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
+    }
+
+    public Film getFilmById(Integer id) {
+        return filmStorage.getFilmById(id);
     }
 
     public void addLike(Integer filmId, Integer userId) {
+        Film film = filmStorage.getFilmById(filmId);
         if (filmStorage.getFilmById(filmId) == null) {
             throw new NotFoundException("Такого фильма не существует.");
         }
-        Film film = filmStorage.getFilmById(filmId);
+
         Set<Integer> likes = film.getLikes();
 
         if (likes.contains(userId)) {
@@ -59,12 +80,7 @@ public class FilmService {
 
     public List<Film> getTopFilms(int count) {
         List<Film> allFilms = filmStorage.getAllFilms();
-        Collections.sort(allFilms, new Comparator<Film>() {
-            @Override
-            public int compare(Film o1, Film o2) {
-                return o2.getLikes().size() - o1.getLikes().size();
-            }
-        });
+        Collections.sort(allFilms, new FilmComparator());
         List<Film> top10Films = allFilms
                 .stream()
                 .limit(count)

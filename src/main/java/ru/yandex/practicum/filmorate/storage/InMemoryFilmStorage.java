@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage;/* # parse("File Header.java")*/
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +19,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private Map<Integer, Film> films = new ConcurrentHashMap<>();
-    private FilmValidator validator = new FilmValidator();
     private Integer filmId = 0;
 
     @Override
     public Film add(Film film) {
-        validator.isValid(film);
         film.setId(++filmId);
         films.put(film.getId(), film);
         return film;
@@ -33,7 +30,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        validator.isValid(film);
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Такого фильма не существует.");
         }

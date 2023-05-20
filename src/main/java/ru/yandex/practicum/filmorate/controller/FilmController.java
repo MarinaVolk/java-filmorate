@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;/* # parse("File Header.java")*/
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,23 +18,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
-
-    private InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
-    private FilmService filmService = new FilmService(filmStorage);
+    private final FilmService filmService;
 
     // добавление фильма
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
         log.info("Запрос на добавление фильма - {}", film.getName());
-        return filmStorage.add(film);
+        return filmService.add(film);
     }
 
     // обновление фильма
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
         log.info("Запрос на обновление фильма - {}", film.getName());
-        return filmStorage.update(film);
+        return filmService.update(film);
     }
 
     // PUT /films/{id}/like/{userId}
@@ -52,12 +51,12 @@ public class FilmController {
     // получение всех фильмов
     @GetMapping
     public List<Film> getAll() {
-        return filmStorage.getAllFilms();
+        return filmService.getAllFilms();
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable int id) {
-        return filmStorage.getFilmById(id);
+        return filmService.getFilmById(id);
     }
 
     // GET /films/popular?count={count}

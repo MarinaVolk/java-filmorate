@@ -1,15 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;/* # parse("File Header.java")*/
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * File Name: UserController.java
@@ -20,24 +18,23 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-public class UserController {
+@RequiredArgsConstructor
 
-    private Map<Integer, User> users = new ConcurrentHashMap<>();
-    private InMemoryUserStorage userStorage = new InMemoryUserStorage();
-    private UserService userService = new UserService(userStorage);
+public class UserController {
+    private final UserService userService;
 
     // создание пользователя
     @PostMapping
     public User createUser(@RequestBody User user) {
         log.info("Запрос на создание пользователя - {}", user.getEmail());
-        return userStorage.addUser(user);
+        return userService.addUser(user);
     }
 
     // обновление пользователя
     @PutMapping
     public User updateUser(@RequestBody User user) {
         log.info("Запрос на обновление пользователя - {}", user.getEmail());
-        return userStorage.updateUser(user);
+        return userService.updateUser(user);
     }
 
     // PUT /users/{id}/friends/{friendId}
@@ -55,12 +52,12 @@ public class UserController {
     // получение списка всех пользователей
     @GetMapping
     public List<User> getAll() {
-        return new ArrayList<>(userStorage.getAllUsers());
+        return new ArrayList<>(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
-        return userStorage.getUserById(id);
+        return userService.getUserById(id);
     }
 
     // GET /users/{id}/friends

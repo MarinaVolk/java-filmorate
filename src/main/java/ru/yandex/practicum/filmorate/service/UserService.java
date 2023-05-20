@@ -24,13 +24,32 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserStorage userStorage;
-    private final UserValidator userValidator;
-    private Integer userId = 0;
+    private final UserValidator validator;
 
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
-        userValidator = new UserValidator();
+        validator = new UserValidator();
+    }
+
+    public User addUser(User user) {
+        validator.isValid(user);
+        userStorage.addUser(user);
+        return user;
+    }
+
+    public User updateUser(User user) {
+        validator.isValid(user);
+        userStorage.updateUser(user);
+        return user;
+    }
+
+    public List<User> getAllUsers() {
+        return userStorage.getAllUsers();
+    }
+
+    public User getUserById(Integer id) {
+        return userStorage.getUserById(id);
     }
 
     public void addFriend(Integer id, Integer friendId) {
