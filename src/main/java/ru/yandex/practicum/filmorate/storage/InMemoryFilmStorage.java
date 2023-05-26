@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage;/* # parse("File Header.java")*/
 
-import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
