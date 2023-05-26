@@ -28,8 +28,8 @@ public class MpaDao {
 
         List<Mpa> allMpa = getAllMpa();
 
-        return allMpa.stream().filter(x -> x.getId() == id).findFirst().
-                orElseThrow(() -> new NotFoundException("По данному id " + id + " рейтига mpa не найдено."));
+        return allMpa.stream().filter(x -> x.getId() == id).findFirst()
+        .orElseThrow(() -> new NotFoundException("По данному id " + id + " рейтига mpa не найдено."));
     }
 
     public List<Mpa> getAllMpa() {
