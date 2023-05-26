@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Date: 2023-05-12,   11:08 PM (UTC+3)
  * Description:
  */
-@Component
+//@Component
 public class InMemoryUserStorage implements UserStorage {
     private Map<Integer, User> users = new ConcurrentHashMap<>();
     private Integer userId = 0;

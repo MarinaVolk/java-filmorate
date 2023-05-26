@@ -66,9 +66,9 @@ public class UserService {
             throw new AlreadyLikedException("Пользователь уже есть в друзьях.");
         }
         friendsOfUser1.add(friendId);
-        friendsOfUser2.add(id);
+        //friendsOfUser2.add(id);
         userStorage.updateUser(user1);
-        userStorage.updateUser(user2);
+        //userStorage.updateUser(user2);
     }
 
     public void deleteFriend(Integer id, Integer friendId) {

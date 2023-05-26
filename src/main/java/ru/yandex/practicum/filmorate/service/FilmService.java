@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyLikedException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
@@ -86,6 +88,30 @@ public class FilmService {
                 .limit(count)
                 .collect(Collectors.toList());
         return top10Films;
+    }
+
+    public List<Mpa> findAllMpa() {
+        return filmStorage.getAllMpa();
+    }
+
+    public Mpa getMpaById(Integer id) {
+        List<Mpa> allMpa = findAllMpa();
+        if (id > allMpa.size() || id < 1) {
+            throw new NotFoundException("Некорректный Id рейтинга");
+        }
+        return allMpa.stream().filter(x -> x.getId() == id).findFirst().get();
+    }
+
+    public List<Genre> findAllGenres() {
+        return filmStorage.getAllGenres();
+    }
+
+    public Genre getGenreById(Integer id) {
+        List<Genre> allGenres = findAllGenres();
+        if (id > allGenres.size() || id < 1) {
+            throw new NotFoundException("Некорректный Id жанра");
+        }
+        return allGenres.stream().filter(x -> x.getId() == id).findFirst().get();
     }
 
 }

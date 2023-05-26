@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.storage;/* # parse("File Header.java")*/
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Description:
  */
 
-@Component
+//@Component
 public class InMemoryFilmStorage implements FilmStorage {
     private Map<Integer, Film> films = new ConcurrentHashMap<>();
     private Integer filmId = 0;
@@ -54,6 +56,22 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException("Такого фильма не существует.");
         }
         return films.get(id);
+    }
+
+    public Genre getGenreById(Integer id) {
+        return null;
+    }
+
+    public List<Genre> getAllGenres() {
+        return null;
+    }
+
+    public Mpa getMpaById(Integer id) {
+        return null;
+    }
+
+    public List<Mpa> getAllMpa() {
+        return null;
     }
 
 }
