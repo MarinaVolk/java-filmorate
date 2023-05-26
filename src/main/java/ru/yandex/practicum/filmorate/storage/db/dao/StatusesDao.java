@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.db.dao;/* # parse("File Header.java")*/
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Status;
 
 import java.sql.ResultSet;
