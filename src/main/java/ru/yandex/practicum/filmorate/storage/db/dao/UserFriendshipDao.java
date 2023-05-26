@@ -42,9 +42,9 @@ public class UserFriendshipDao {
 
         String sql = "INSERT INTO USER_FRIENDSHIP (user_id, user2_id) VALUES (" + user.getId() + ", ?)";
 
-        Set<Integer> friends_Id = user.getFriends();
+        Set<Integer> friendsId = user.getFriends();
 
-        for (Integer friendId : friends_Id) {
+        for (Integer friendId : friendsId) {
             jdbcTemplate.update(sql, friendId);
         }
 
