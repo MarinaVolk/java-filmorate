@@ -30,7 +30,7 @@ public class UsersDao {
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
 
-        if(rowSet.next()) {
+        if (rowSet.next()) {
             User user = new User(rowSet.getString("email"),
                     rowSet.getString("login"),
                     rowSet.getDate("birthday").toLocalDate());
