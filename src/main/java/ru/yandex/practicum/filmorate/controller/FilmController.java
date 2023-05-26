@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.ArrayList;
@@ -67,30 +65,6 @@ public class FilmController {
         log.info("Получен запрос на получение топ фильмов count = {}", count);
         List<Film> topCountFilms = new ArrayList<>(filmService.getTopFilms(count));
         return topCountFilms;
-    }
-
-    // получение всех MPA
-    @GetMapping("/mpa")
-    public List<Mpa> getAllMpa() {
-        return filmService.findAllMpa();
-    }
-
-    // получение MPA по ID
-    @GetMapping("/mpa/{id}")
-    public Mpa getMpaById(@PathVariable int id) {
-        return filmService.getMpaById(id);
-    }
-
-    // получение всех жанров
-    @GetMapping("/genres")
-    public List<Genre> getAllGenres() {
-        return filmService.findAllGenres();
-    }
-
-    // получение жанра по ID
-    @GetMapping("/genres/{id}")
-    public Genre getGenreById(@PathVariable int id) {
-        return filmService.getGenreById(id);
     }
 
 }

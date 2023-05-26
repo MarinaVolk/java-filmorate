@@ -43,17 +43,12 @@ public class UsersDao {
     }
 
     public void deleteUserById(Integer id) {
-
         String sql = "DELETE FROM USERS WHERE user_id = ?";
-
         jdbcTemplate.update(sql, id);
-
     }
 
     public User save(User user) {
-
         String insertSql = "INSERT INTO USERS (EMAIL, LOGIN, NAME, BIRTHDAY) VALUES (?, ?, ?, ?)";
-
         String selectSql = "SELECT USER_ID FROM USERS WHERE EMAIL = ?";
 
         jdbcTemplate.update(insertSql, user.getEmail(),
@@ -69,34 +64,7 @@ public class UsersDao {
             id = rs.getInt("user_id");
         }
         user.setId(id);
-
         return user;
-
     }
 
-    /* common friends
-    public List<User> getCommonFriends(Integer userId, Integer friendId) {
-
-        String sql = "SELECT * FROM USERS "+
-                "WHERE USER_ID IN (SELECT USER_ID FROM likeslist WHERE USER_ID  = ?) "+
-                "INTERSECT "+
-                "SELECT * FROM FILMS "+
-                "WHERE FILM_ID IN (SELECT FILM_ID FROM likeslist WHERE USER_ID  = ?)";
-
-        List<User> result = new ArrayList<>();
-
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql,userId,friendId);
-
-        if (rowSet.next()) {
-            Film film = new Film(rowSet.getString("name"),
-                    rowSet.getString("description"),
-                    rowSet.getDate("releaseDate").toLocalDate(),
-                    rowSet.getInt("duration"));
-            film.setId(rowSet.getInt("film_id"));
-            film.setMpa(mpaDao.getMpaById(rowSet.getInt("rating_id")));
-            result.add(film);
-        }
-
-        return result;
-    }  */
 }

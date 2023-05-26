@@ -25,15 +25,13 @@ public class MpaDao {
     }
 
     public Mpa getMpaById(Integer id) {
-
         List<Mpa> allMpa = getAllMpa();
 
         return allMpa.stream().filter(x -> x.getId() == id).findFirst()
-        .orElseThrow(() -> new NotFoundException("По данному id " + id + " рейтига mpa не найдено."));
+                .orElseThrow(() -> new NotFoundException("По данному id " + id + " рейтига mpa не найдено."));
     }
 
     public List<Mpa> getAllMpa() {
-
         String sql = "SELECT * FROM mpa";
         return jdbcTemplate.query(sql, ((rs, rowNum) -> setMpa(rs)));
     }

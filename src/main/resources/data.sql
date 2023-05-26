@@ -22,8 +22,4 @@ VALUES ('R');
 INSERT INTO mpa (name)
 VALUES ('NC-17');
 
-INSERT INTO statuses (name)
-VALUES ('Confirmed');
-INSERT INTO statuses (name)
-VALUES ('Nonconfirmed');
 

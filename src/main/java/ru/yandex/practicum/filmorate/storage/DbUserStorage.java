@@ -22,7 +22,6 @@ import java.util.List;
 @Component
 @Qualifier("DbUserStorage")
 public class DbUserStorage implements UserStorage {
-
     private final JdbcTemplate jdbcTemplate;
     private final UsersDao usersDao;
     private final UserFriendshipDao userFriendshipDao;
@@ -61,7 +60,6 @@ public class DbUserStorage implements UserStorage {
 
         } else {
             throw new NotFoundException("Пользователя с таким ID не существует.");
-            //addUser(user);
         }
         return user;
 
@@ -69,14 +67,11 @@ public class DbUserStorage implements UserStorage {
 
     @Override
     public void deleteUser(Integer id) {
-
         usersDao.deleteUserById(id);
-
     }
 
     @Override
     public List<User> getAllUsers() {
-
         List<User> users = new ArrayList<>();
 
         List<Integer> usersId = jdbcTemplate.query("SELECT user_id FROM USERS", ((rs, rowNum) -> rs.getInt("user_id")));
@@ -84,18 +79,14 @@ public class DbUserStorage implements UserStorage {
         for (Integer userId : usersId) {
             users.add(getUserById(userId));
         }
-
         return users;
     }
 
     @Override
     public User getUserById(Integer id) {
-
         User user = usersDao.getUserById(id);
         user.setFriends(userFriendshipDao.getFriendListById(id));
-
         return user;
-
     }
 
 

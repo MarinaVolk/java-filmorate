@@ -24,30 +24,24 @@ public class UserFriendshipDao {
     }
 
     public Set<Integer> getFriendListById(Integer id) {
-
         String sql = "SELECT user2_id FROM USER_FRIENDSHIP WHERE user_id = ?";
         return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user2_id"), id));
 
     }
 
     public void delete(Integer id) {
-
         String sql = "DELETE FROM USER_FRIENDSHIP WHERE user_id = ?";
-
         jdbcTemplate.update(sql, id);
 
     }
 
     public void saveFriendList(User user) {
-
         String sql = "INSERT INTO USER_FRIENDSHIP (user_id, user2_id) VALUES (" + user.getId() + ", ?)";
-
         Set<Integer> friendsId = user.getFriends();
 
         for (Integer friendId : friendsId) {
             jdbcTemplate.update(sql, friendId);
         }
-
     }
 
 }

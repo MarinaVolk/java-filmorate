@@ -23,7 +23,6 @@ import java.util.Set;
 @Component
 @Qualifier("DbFilmStorage")
 public class DbFilmStorage implements FilmStorage {
-
     private final JdbcTemplate jdbcTemplate;
     private final FilmsDao filmsDao;
     private final LikesListDao likesListDao;
@@ -80,23 +79,17 @@ public class DbFilmStorage implements FilmStorage {
         }
 
         return film;
-
     }
 
     @Override
     public void delete(Integer id) {
-
         genresListDao.delete(id);
-
         likesListDao.delete(id);
-
         filmsDao.deleteFilm(id);
-
     }
 
     @Override
     public List<Film> getAllFilms() {
-
         List<Film> films = new ArrayList<>();
 
         List<Integer> filmsId = jdbcTemplate.query("SELECT film_id FROM FILMS ORDER BY film_id ASC;", ((rs, rowNum) -> rs.getInt("film_id")));
@@ -104,14 +97,11 @@ public class DbFilmStorage implements FilmStorage {
         for (Integer filmId : filmsId) {
             films.add(getFilmById(filmId));
         }
-
         return films;
-
     }
 
     @Override
     public Film getFilmById(Integer id) {
-
         Film film = filmsDao.getFilmById(id);
 
         film.setLikes(likesListDao.getLikesListById(id));
@@ -126,11 +116,8 @@ public class DbFilmStorage implements FilmStorage {
             }
         }
 
-
         film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
-
         film.setGenres(genres);
-
         return film;
     }
 
