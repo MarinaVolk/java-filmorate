@@ -40,6 +40,5 @@ CREATE TABLE IF NOT EXISTS likesList (
 
 CREATE TABLE IF NOT EXISTS user_friendship (
     user_id INTEGER REFERENCES users (user_id),
-    user2_id INTEGER REFERENCES users (user_id),
-    status_id INTEGER REFERENCES statuses(status_id)
+    user2_id INTEGER REFERENCES users (user_id)
 );
