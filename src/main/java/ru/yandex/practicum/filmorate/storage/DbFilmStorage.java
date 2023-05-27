@@ -122,7 +122,7 @@ public class DbFilmStorage implements FilmStorage {
     }
 
 
-    public boolean contains(Integer id) {
+    private boolean contains(Integer id) {
         String sql = "SELECT * FROM FILMS WHERE film_id = ?";
         return jdbcTemplate.queryForRowSet(sql, id).next();
     }

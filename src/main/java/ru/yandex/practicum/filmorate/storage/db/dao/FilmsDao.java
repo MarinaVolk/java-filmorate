@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 
 /**
@@ -19,6 +20,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 public class FilmsDao {
     private final JdbcTemplate jdbcTemplate;
     private final MpaDao mpaDao;
+    private final FilmValidator validator = new FilmValidator();
 
     @Autowired
     public FilmsDao(JdbcTemplate jdbcTemplate, MpaDao mpaDao) {
@@ -27,6 +29,7 @@ public class FilmsDao {
     }
 
     public Film save(Film film) {
+        validator.isValid(film);
 
         String insertSql = "INSERT INTO FILMS (NAME, DESCRIPTION, RELEASEDATE, DURATION, RATING_ID) VALUES (?, ?, ?, ?, ?)";
 

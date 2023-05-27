@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 
 /**
@@ -18,6 +19,7 @@ import ru.yandex.practicum.filmorate.model.User;
 public class UsersDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final UserValidator validator = new UserValidator();
 
     @Autowired
     public UsersDao(JdbcTemplate jdbcTemplate) {
@@ -48,6 +50,8 @@ public class UsersDao {
     }
 
     public User save(User user) {
+        validator.isValid(user);
+
         String insertSql = "INSERT INTO USERS (EMAIL, LOGIN, NAME, BIRTHDAY) VALUES (?, ?, ?, ?)";
         String selectSql = "SELECT USER_ID FROM USERS WHERE EMAIL = ?";
 
@@ -64,6 +68,11 @@ public class UsersDao {
             id = rs.getInt("user_id");
         }
         user.setId(id);
+        return user;
+    }
+
+    public User update(User user) {
+        validator.isValid(user);
         return user;
     }
 

@@ -44,6 +44,7 @@ public class DbUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
+        usersDao.update(user);
 
         if (contains(user.getId())) {
 
@@ -90,7 +91,7 @@ public class DbUserStorage implements UserStorage {
     }
 
 
-    public boolean contains(Integer id) {
+    private boolean contains(Integer id) {
         String sql = "SELECT * FROM USERS WHERE user_id = ?";
         return jdbcTemplate.queryForRowSet(sql, id).next();
     }
