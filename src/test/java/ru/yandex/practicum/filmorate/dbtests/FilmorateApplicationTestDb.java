@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // Films: add, update, delete, getAllFilms, getFilmById, getGenreById, getAllGenres,
 // getMpaById, getAllMpa,getTopFilms
 
-class FilmorateApplicationTestsDb {
+class FilmorateApplicationTestDb {
     private final DbUserStorage userStorage;
     private final DbFilmStorage filmStorage;
 
