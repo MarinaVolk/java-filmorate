@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Mpa {
-    private int id;
+    private Integer id;
     private String name;
 
     public Mpa(int id) {

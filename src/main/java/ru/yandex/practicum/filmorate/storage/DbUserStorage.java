@@ -3,15 +3,17 @@ package ru.yandex.practicum.filmorate.storage;/* # parse("File Header.java")*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.AlreadyLikedException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.db.dao.LikesListDao;
-import ru.yandex.practicum.filmorate.storage.db.dao.UserFriendshipDao;
-import ru.yandex.practicum.filmorate.storage.db.dao.UsersDao;
+import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * File Name: DbUserStorage.java
@@ -23,73 +25,132 @@ import java.util.List;
 @Qualifier("DbUserStorage")
 public class DbUserStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final UsersDao usersDao;
-    private final UserFriendshipDao userFriendshipDao;
-    private final LikesListDao likesListDao;
+    private final UserValidator validator = new UserValidator();
 
     @Autowired
-    public DbUserStorage(JdbcTemplate jdbcTemplate, UsersDao usersDao, UserFriendshipDao userFriendshipDao, LikesListDao likesListDao) {
+    public DbUserStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.usersDao = usersDao;
-        this.userFriendshipDao = userFriendshipDao;
-        this.likesListDao = likesListDao;
     }
 
-    @Override
+
     public User addUser(User user) {
-        User userWithId = usersDao.save(user);
-        userFriendshipDao.saveFriendList(userWithId);
-        return userWithId;
+        validator.isValid(user);
+
+        String insertSql = "INSERT INTO USERS (EMAIL, LOGIN, NAME, BIRTHDAY) VALUES (?, ?, ?, ?)";
+        String selectSql = "SELECT USER_ID FROM USERS WHERE EMAIL = ?";
+
+        // запрос в БД, внесение данных о созданном пользователе
+        jdbcTemplate.update(insertSql, user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday());
+
+        SqlRowSet rs = jdbcTemplate.queryForRowSet(selectSql, user.getEmail());
+
+        int id = 0;
+
+        if (rs.next()) {
+            id = rs.getInt("user_id");
+        }
+        user.setId(id);
+
+        return user;
     }
 
     @Override
     public User updateUser(User user) {
-        usersDao.update(user);
+        validator.isValid(user);
 
         if (contains(user.getId())) {
 
             String sql = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE user_id = ?";
-
-            userFriendshipDao.delete(user.getId());
-            userFriendshipDao.saveFriendList(user);
-
+            // запрос в БД, внесение обновленных данных о пользователе
             jdbcTemplate.update(sql, user.getEmail(),
                     user.getLogin(),
                     user.getName(),
                     user.getBirthday(),
                     user.getId());
-
         } else {
             throw new NotFoundException("Пользователя с таким ID не существует.");
         }
         return user;
-
     }
 
     @Override
     public void deleteUser(Integer id) {
-        usersDao.deleteUserById(id);
+        String sql = "DELETE FROM USERS WHERE user_id = ?";
+        jdbcTemplate.update(sql, id);
     }
+
 
     @Override
     public List<User> getAllUsers() {
+
+        String sql = "SELECT * FROM USERS";
+        // запрос к БД
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
+
         List<User> users = new ArrayList<>();
-
-        List<Integer> usersId = jdbcTemplate.query("SELECT user_id FROM USERS", ((rs, rowNum) -> rs.getInt("user_id")));
-
-        for (Integer userId : usersId) {
-            users.add(getUserById(userId));
+        try {
+            while (rowSet.next()) {
+                User user = new User(
+                        rowSet.getString("email"),
+                        rowSet.getString("login"),
+                        rowSet.getDate("birthday").toLocalDate());
+                user.setName(rowSet.getString("name"));
+                user.setId(rowSet.getInt("user_id"));
+                users.add(user);
+            }
+        } catch (NotFoundException e) {
+            System.out.println("Отсутствуют пользователи в БД.");
         }
         return users;
     }
 
     @Override
     public User getUserById(Integer id) {
-        User user = usersDao.getUserById(id);
-        user.setFriends(userFriendshipDao.getFriendListById(id));
+        String sql = "SELECT * FROM USERS WHERE user_id = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
+        User user;
+        if (rowSet.next()) {
+            user = new User(
+                    rowSet.getString("email"),
+                    rowSet.getString("login"),
+                    rowSet.getDate("birthday").toLocalDate());
+            user.setName(rowSet.getString("name"));
+            user.setId(id);
+        } else {
+            throw new NotFoundException("Отсутствуют данные в БД по указанному ID.");
+        }
+        user.setFriends(getFriendListById(id));
+
         return user;
     }
 
+    public Set<Integer> getFriendListById(Integer id) {
+        String sql = "SELECT user2_id FROM USER_FRIENDSHIP WHERE user_id = ?";
+        return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user2_id"), id));
+    }
+
+    public void deleteFromFriendListById(Integer id, Integer friendId) {
+        String sql = "DELETE FROM USER_FRIENDSHIP WHERE user_id = ? AND user2_id = ?";
+        jdbcTemplate.update(sql, id, friendId);
+    }
+
+    // добавление 1 друга в список друзей в БД
+    public void addFriend(Integer id, Integer friendId) {
+        if (id < 1 || friendId < 1) {
+            throw new NotFoundException("ID не может быть отрицательным.");
+        }
+        Set<Integer> friendsOfUser1 = getFriendListById(id);
+
+        if (friendsOfUser1.contains(friendId)) {
+            throw new AlreadyLikedException("Пользователь уже есть в друзьях.");
+        }
+
+        String sql = "INSERT INTO USER_FRIENDSHIP (user_id, user2_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, id, friendId);
+    }
 
     private boolean contains(Integer id) {
         String sql = "SELECT * FROM USERS WHERE user_id = ?";
@@ -97,3 +158,5 @@ public class DbUserStorage implements UserStorage {
     }
 
 }
+
+

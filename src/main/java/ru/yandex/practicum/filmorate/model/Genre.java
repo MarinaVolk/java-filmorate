@@ -12,14 +12,15 @@ import lombok.NoArgsConstructor;
  * Description:
  */
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Genre {
-    private int id;
+    private Integer id;
     private String name;
 
-    public Genre(int id) {
+    public Genre(int id, String name) {
         this.id = id;
+        this.name = name;
     }
 }
