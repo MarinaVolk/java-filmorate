@@ -76,6 +76,7 @@ public class DbFilmStorage implements FilmStorage {
 
             //List<Genre> genres = film.getGenres();
             saveGenresListByFilm(film);
+            //addGenresToFilm(film.getGenres(), film);
 
         } else {
             throw new NotFoundException("Такого фильма не существует.");
@@ -117,6 +118,9 @@ public class DbFilmStorage implements FilmStorage {
                 Set<Integer> likes = getAllLikesByFilmId(film.getId());
                 film.setLikes(likes);
 
+                // добавление жанров фильму
+                addGenresToFilm(film.getId(), film);
+
                 films.add(film);
             }
         } catch (NotFoundException e) {
@@ -139,23 +143,27 @@ public class DbFilmStorage implements FilmStorage {
 
             film.setId(rowSet.getInt("film_id"));
 
+            // добавление MPA
             Integer mpaId = rowSet.getInt("rating_id");
             Mpa mpa = getMpaById(mpaId);
             film.setMpa(mpa);
 
+            // добавление лайков
             Set<Integer> likes = getAllLikesByFilmId(film.getId());
             film.setLikes(likes);
 
-            Set<Integer> genres = getGenresSetIdByFilmId(id);
-            List<Integer> setGenres = new ArrayList<>();
-            setGenres.addAll(setGenres);
+            // добавление жанров фильму
+            addGenresToFilm(id, film);
+            /*Set<Integer> genres = getGenresSetIdByFilmId(id);
+            List<Integer> genresThatAreSetToFilm = new ArrayList<>();
+            genresThatAreSetToFilm.addAll(genres);
             List<Genre> filmsGenres = new ArrayList<>();
 
-            for (Integer intG: setGenres) {
+            for (Integer intG: genresThatAreSetToFilm) {
                Genre genre = getGenreById(intG);
                 filmsGenres.add(genre);
             }
-            film.setGenres(filmsGenres);
+            film.setGenres(filmsGenres); */
 
         } else {
             throw new NotFoundException("Отсутствуют данные в БД по указанному ID");
@@ -244,6 +252,21 @@ public class DbFilmStorage implements FilmStorage {
         return new HashSet<>(genres);
     }
 
+    private Film addGenresToFilm(Integer id, Film film) {
+        // добавление жанров фильму
+        Set<Integer> genres = getGenresSetIdByFilmId(id);
+        List<Integer> genresThatAreSetToFilm = new ArrayList<>();
+        genresThatAreSetToFilm.addAll(genres);
+        List<Genre> filmsGenres = new ArrayList<>();
+
+        for (Integer intG: genresThatAreSetToFilm) {
+            Genre genre = getGenreById(intG);
+            filmsGenres.add(genre);
+        }
+        film.setGenres(filmsGenres);
+        return film;
+    }
+
     public void deleteFromGenresList(Integer id) {
         String sql = "DELETE FROM GENRESLIST WHERE film_id = ?";
         jdbcTemplate.update(sql, id);
@@ -294,7 +317,7 @@ public class DbFilmStorage implements FilmStorage {
     }
 
     public void dislikeFilm(Integer userId, Integer filmId) {
-        String sql = "DELETE FROM LIKESLIST WHERE film_id = ? AND user2_id = ?";
+        String sql = "DELETE FROM LIKESLIST WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(sql, filmId, userId);
     }
 
