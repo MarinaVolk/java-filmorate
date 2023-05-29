@@ -74,6 +74,9 @@ public class DbFilmStorage implements FilmStorage {
                     film.getMpa().getId(),
                     film.getId());
 
+            //List<Genre> genres = film.getGenres();
+            saveGenresListByFilm(film);
+
         } else {
             throw new NotFoundException("Такого фильма не существует.");
         }
@@ -142,6 +145,17 @@ public class DbFilmStorage implements FilmStorage {
 
             Set<Integer> likes = getAllLikesByFilmId(film.getId());
             film.setLikes(likes);
+
+            Set<Integer> genres = getGenresSetIdByFilmId(id);
+            List<Integer> setGenres = new ArrayList<>();
+            setGenres.addAll(setGenres);
+            List<Genre> filmsGenres = new ArrayList<>();
+
+            for (Integer intG: setGenres) {
+               Genre genre = getGenreById(intG);
+                filmsGenres.add(genre);
+            }
+            film.setGenres(filmsGenres);
 
         } else {
             throw new NotFoundException("Отсутствуют данные в БД по указанному ID");

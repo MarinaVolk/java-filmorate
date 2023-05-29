@@ -67,7 +67,6 @@ public class UserService {
         }
         friendsOfUser1.add(friendId);
         userStorage.addFriend(id, friendId);
-        //userStorage.updateUser(user1);
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
@@ -80,10 +79,12 @@ public class UserService {
         if (!user1.getFriends().contains(friendId)) {
             throw new NotFoundException("Этот пользователь отсутствует в списке друзей.");
         }
-        user1.getFriends().remove(friendId);
+
+        userStorage.deleteFromFriendListById(id, friendId);
+        /*user1.getFriends().remove(friendId);
         user2.getFriends().remove(id);
         userStorage.updateUser(user1);
-        userStorage.updateUser(user2);
+        userStorage.updateUser(user2);*/
     }
 
     public List<User> getAllFriendsList(Integer id) {

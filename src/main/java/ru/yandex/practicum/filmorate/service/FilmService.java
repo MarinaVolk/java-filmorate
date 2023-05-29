@@ -7,11 +7,10 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.DbFilmStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * File Name: FilmService.java
@@ -23,11 +22,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
-    private final FilmStorage filmStorage;
+    private final DbFilmStorage filmStorage;
     private final FilmValidator validator;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(DbFilmStorage filmStorage) {
         this.filmStorage = filmStorage;
         validator = new FilmValidator();
     }
@@ -63,8 +62,9 @@ public class FilmService {
         if (likes.contains(userId)) {
             throw new AlreadyLikedException("Пользователь уже поставил лайк этому фильму.");
         }
-        likes.add(userId);
-        filmStorage.update(film);
+        filmStorage.putLikeToFilm(filmId, userId);
+        /*likes.add(userId);
+        filmStorage.update(film);*/
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
@@ -76,18 +76,26 @@ public class FilmService {
         if (!film.getLikes().contains(userId)) {
             throw new NotFoundException("Этот пользователь не ставил лайк этому фильму.");
         }
-        film.getLikes().remove(userId);
-        filmStorage.update(film);
+        filmStorage.dislikeFilm(userId, filmId);
+        /*film.getLikes().remove(userId);
+        filmStorage.update(film);*/
     }
 
     public List<Film> getTopFilms(int count) {
-        List<Film> allFilms = filmStorage.getAllFilms();
-        Collections.sort(allFilms, new FilmComparator());
+        List<Film> allFilms = new ArrayList<>();
+        List<Integer> topFilmsIds = filmStorage.getTopFilms(count);
+
+        for(Integer filmId: topFilmsIds) {
+            //filmStorage.getFilmById(filmId);
+            allFilms.add(filmStorage.getFilmById(filmId));
+        }
+
+        /*Collections.sort(allFilms, new FilmComparator());
         List<Film> top10Films = allFilms
                 .stream()
                 .limit(count)
-                .collect(Collectors.toList());
-        return top10Films;
+                .collect(Collectors.toList()); */
+        return allFilms;
     }
 
     public List<Mpa> findAllMpa() {
