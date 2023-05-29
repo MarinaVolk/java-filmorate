@@ -85,7 +85,7 @@ public class FilmService {
         List<Film> allFilms = new ArrayList<>();
         List<Integer> topFilmsIds = filmStorage.getTopFilms(count);
 
-        for(Integer filmId: topFilmsIds) {
+        for (Integer filmId: topFilmsIds) {
             //filmStorage.getFilmById(filmId);
             allFilms.add(filmStorage.getFilmById(filmId));
         }
