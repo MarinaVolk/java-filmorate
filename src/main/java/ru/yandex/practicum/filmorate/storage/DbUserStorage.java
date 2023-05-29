@@ -142,7 +142,6 @@ public class DbUserStorage implements UserStorage {
         }
         return usersIds;
 
-        //return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user2_id"), id));
     }
 
 
@@ -161,8 +160,6 @@ public class DbUserStorage implements UserStorage {
         }
         return usersIds;
     }
-
-
 
     public void deleteFromFriendListById(Integer id, Integer friendId) {
         String sql = "DELETE FROM USER_FRIENDSHIP WHERE user_id = ? AND user2_id = ?";
