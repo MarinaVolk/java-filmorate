@@ -278,6 +278,11 @@ public class DbFilmStorage implements FilmStorage {
         return jdbcTemplate.queryForList(sql, Integer.class, count);
     }
 
+    public List<Integer> getMostPopular() {
+        String sql = "SELECT film_id FROM LIKESLIST GROUP BY film_id ORDER BY COUNT(user_id) DESC LIMIT 1";
+        return jdbcTemplate.queryForList(sql, Integer.class);
+    }
+
     public void putLikeToFilm(Integer filmId, Integer userId) {
         if (userId < 1 || filmId < 1) {
             throw new NotFoundException("ID не может быть отрицательным.");

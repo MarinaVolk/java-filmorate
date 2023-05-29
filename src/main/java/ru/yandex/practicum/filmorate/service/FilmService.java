@@ -83,7 +83,12 @@ public class FilmService {
     }
 
     public List<Film> getTopFilms(int count) {
-        List<Film> allFilms = filmStorage.getAllFilms();
+        List<Film> allFilms = new ArrayList<>();
+        if (count == 1) {
+            allFilms = getMostPopularFilm();
+        }
+        else {
+            allFilms = filmStorage.getAllFilms();
 
         /*List<Integer> topFilmsIds = filmStorage.getTopFilms(count);
 
@@ -93,12 +98,22 @@ public class FilmService {
         }*/
 
 
-        Collections.sort(allFilms, new FilmComparator());
-        List<Film> top10Films = allFilms
-                .stream()
-                .limit(count)
-                .collect(Collectors.toList());
+            Collections.sort(allFilms, new FilmComparator());
+            List<Film> top10Films = allFilms
+                    .stream()
+                    .limit(count)
+                    .collect(Collectors.toList());
+        }
         return allFilms;
+    }
+
+    public List<Film> getMostPopularFilm() {
+        List<Film> allFilms = new ArrayList<>();
+        List<Integer> ids = filmStorage.getMostPopular();
+        //filmStorage.getFilmById(ids.get(0));
+        allFilms.add(filmStorage.getFilmById(ids.get(0)));
+        return allFilms;
+
     }
 
     public List<Mpa> findAllMpa() {
