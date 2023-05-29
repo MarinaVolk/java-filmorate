@@ -122,6 +122,7 @@ public class DbFilmStorage implements FilmStorage {
                 //rowSet.getInt("duration"));
                 //addGenresToFilm(film.getId(), film);
                 addGenresToFilm(film.getId(), film);
+
                 films.add(film);
                 // добавление жанров фильму
 
@@ -296,6 +297,11 @@ public class DbFilmStorage implements FilmStorage {
                 jdbcTemplate.update(sql, genre.getId());
             }
         }
+        if (genres.isEmpty()) {
+            String sql2 = "DELETE FROM GENRESLIST WHERE film_id = ?";
+            jdbcTemplate.update(sql2, film.getId());
+        }
+
     }
 
 
