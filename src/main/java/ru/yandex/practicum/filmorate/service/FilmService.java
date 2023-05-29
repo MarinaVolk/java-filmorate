@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.DbFilmStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * File Name: FilmService.java
@@ -82,19 +83,21 @@ public class FilmService {
     }
 
     public List<Film> getTopFilms(int count) {
-        List<Film> allFilms = new ArrayList<>();
-        List<Integer> topFilmsIds = filmStorage.getTopFilms(count);
+        List<Film> allFilms = filmStorage.getAllFilms();
+
+        /*List<Integer> topFilmsIds = filmStorage.getTopFilms(count);
 
         for (Integer filmId: topFilmsIds) {
-            //filmStorage.getFilmById(filmId);
-            allFilms.add(filmStorage.getFilmById(filmId));
-        }
+            Film film = filmStorage.getFilmById(filmId);
+            allFilms.add(film);
+        }*/
 
-        /*Collections.sort(allFilms, new FilmComparator());
+
+        Collections.sort(allFilms, new FilmComparator());
         List<Film> top10Films = allFilms
                 .stream()
                 .limit(count)
-                .collect(Collectors.toList()); */
+                .collect(Collectors.toList());
         return allFilms;
     }
 
