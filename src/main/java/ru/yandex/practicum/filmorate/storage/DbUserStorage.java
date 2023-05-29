@@ -129,8 +129,40 @@ public class DbUserStorage implements UserStorage {
 
     public Set<Integer> getFriendListById(Integer id) {
         String sql = "SELECT user2_id FROM USER_FRIENDSHIP WHERE user_id = ?";
-        return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user2_id"), id));
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
+
+        Set<Integer> usersIds = new HashSet<>();
+        try {
+            while (rowSet.next()) {
+                Integer newInt = rowSet.getInt("user2_id");
+                usersIds.add(newInt);
+            }
+        } catch (NotFoundException e) {
+            System.out.println("Отсутствуют друзья.");
+        }
+        return usersIds;
+
+        //return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user2_id"), id));
     }
+
+
+    public Set<Integer> getAllLikesByFilmId(Integer filmId) {
+        String sql = "SELECT user_id FROM LIKESLIST WHERE film_id = ?";
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, filmId);
+        Set<Integer> usersIds = new HashSet<>();
+        try {
+            while (rowSet.next()) {
+                Integer newInt = rowSet.getInt("user_id");
+                usersIds.add(newInt);
+            }
+        } catch (NotFoundException e) {
+            System.out.println("Отсутствуют лайки к этому фильму.");
+        }
+        return usersIds;
+    }
+
+
 
     public void deleteFromFriendListById(Integer id, Integer friendId) {
         String sql = "DELETE FROM USER_FRIENDSHIP WHERE user_id = ? AND user2_id = ?";

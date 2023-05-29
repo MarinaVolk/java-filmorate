@@ -63,6 +63,8 @@ public class DbFilmStorage implements FilmStorage {
 
         if (contains(film.getId())) {
 
+            //delete(film.getId());
+
             String sql = "UPDATE films SET name = ?, description = ?, releaseDate = ?, duration = ?, rating_id = ? WHERE film_id = ?";
 
             jdbcTemplate.update(sql, film.getName(),

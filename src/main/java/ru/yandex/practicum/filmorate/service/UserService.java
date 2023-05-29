@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyLikedException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.DbUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
@@ -23,11 +24,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final UserStorage userStorage;
+    private final DbUserStorage userStorage;
     private final UserValidator validator;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(DbUserStorage userStorage) {
         this.userStorage = userStorage;
         validator = new UserValidator();
     }
@@ -66,7 +67,8 @@ public class UserService {
             throw new AlreadyLikedException("Пользователь уже есть в друзьях.");
         }
         friendsOfUser1.add(friendId);
-        userStorage.updateUser(user1);
+        userStorage.addFriend(id, friendId);
+        //userStorage.updateUser(user1);
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
@@ -86,10 +88,9 @@ public class UserService {
     }
 
     public List<User> getAllFriendsList(Integer id) {
-        return userStorage.getUserById(id).getFriends().stream()
+        return userStorage.getFriendListById(id).stream()
                 .map(friendId -> (userStorage.getUserById(friendId)))
                 .collect(Collectors.toList());
-
     }
 
     public List<User> getCommonFriendsList(Integer id, Integer otherId) {
