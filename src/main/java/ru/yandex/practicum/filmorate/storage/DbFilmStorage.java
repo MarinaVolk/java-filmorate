@@ -119,9 +119,12 @@ public class DbFilmStorage implements FilmStorage {
                 film.setLikes(likes);
 
                 // добавление жанров фильму
+                //rowSet.getInt("duration"));
+                //addGenresToFilm(film.getId(), film);
                 addGenresToFilm(film.getId(), film);
-
                 films.add(film);
+                // добавление жанров фильму
+
             }
         } catch (NotFoundException e) {
             System.out.println("Отсутствуют фильмы в БД.");
