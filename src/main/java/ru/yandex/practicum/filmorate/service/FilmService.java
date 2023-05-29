@@ -86,8 +86,7 @@ public class FilmService {
         List<Film> allFilms = new ArrayList<>();
         if (count == 1) {
             allFilms = getMostPopularFilm();
-        }
-        else {
+        } else {
             allFilms = filmStorage.getAllFilms();
 
         /*List<Integer> topFilmsIds = filmStorage.getTopFilms(count);
