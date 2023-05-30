@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * File Name: DbFilmStorage.java
