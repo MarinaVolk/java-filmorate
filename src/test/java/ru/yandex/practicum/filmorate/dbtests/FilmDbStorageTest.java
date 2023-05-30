@@ -230,6 +230,9 @@ class FilmDbStorageTest {
         userStorage.addUser(user);
         userStorage.addUser(user2);
         userStorage.addUser(user3);
+        Integer userId1 = userStorage.getUserById(user.getId()).getId();
+        Integer userId2 = userStorage.getUserById(user.getId()).getId();
+        Integer userId3 = userStorage.getUserById(user.getId()).getId();
 
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
@@ -250,14 +253,14 @@ class FilmDbStorageTest {
         filmStorage.add(film3);
         mpaDbStorage.addMpaToFilm(film3);
 
-        filmStorage.putLikeToFilm(film.getId(), 1);
-        filmStorage.putLikeToFilm(film.getId(), 2);
-        filmStorage.putLikeToFilm(film.getId(), 3);
+        filmStorage.putLikeToFilm(film.getId(), userId1);
+        filmStorage.putLikeToFilm(film.getId(), userId2);
+        filmStorage.putLikeToFilm(film.getId(), userId3);
 
-        filmStorage.putLikeToFilm(film2.getId(), 1);
-        filmStorage.putLikeToFilm(film2.getId(), 2);
+        filmStorage.putLikeToFilm(film2.getId(), userId1);
+        filmStorage.putLikeToFilm(film2.getId(), userId2);
 
-        filmStorage.putLikeToFilm(film3.getId(), 1);
+        filmStorage.putLikeToFilm(film3.getId(), userId1);
 
         List<Integer> topFilms = new ArrayList<>();
         topFilms.add(film.getId());
