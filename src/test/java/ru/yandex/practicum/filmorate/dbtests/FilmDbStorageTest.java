@@ -223,9 +223,9 @@ class FilmDbStorageTest {
     @Order(8)
     public void getTopFilmsShouldProvideTopFilms() {
 
-        User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
-        User user2 = new User("user2@gmail.com", "user2", LocalDate.of(2000, 01, 01));
-        User user3 = new User("user3@gmail.com", "user3", LocalDate.of(2002, 01, 01));
+        User user = new User("user7@gmail.com", "user7", LocalDate.of(1999, 01, 01));
+        User user2 = new User("user8@gmail.com", "user8", LocalDate.of(2000, 01, 01));
+        User user3 = new User("user9@gmail.com", "user9", LocalDate.of(2002, 01, 01));
 
         userStorage.addUser(user);
         userStorage.addUser(user2);
