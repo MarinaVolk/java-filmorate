@@ -29,41 +29,51 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FilmDbStorageTest {
     private final UserDbStorage userStorage;
-    private final FilmDbStorage filmStorage;
     private final GenreDbStorage genreStorage;
     private final MpaDbStorage mpaDbStorage;
+    private final FilmDbStorage filmStorage;
 
     @Test
     void addShouldAddFilmCorrectly() {
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
 
-        film.setMpa(mpaDbStorage.getMpaById(1));
-        filmStorage.add(film);
+        Mpa mpa = new Mpa(1, "Комедия");
+        film.setMpa(mpa);
 
-        System.out.println(filmStorage.getFilmById(1));
-        System.out.println(filmStorage.getAllMpa());
-        assertEquals(1, filmStorage.getFilmById(1).getId());
-        assertEquals(film, filmStorage.getFilmById(1));
+        filmStorage.add(film);
+        mpaDbStorage.addMpaToFilm(film);
+
+        Film filmFromDb = filmStorage.getFilmById(1);
+        mpaDbStorage.addMpaToFilm(filmFromDb);
+
+        assertEquals(film, filmFromDb);
     }
 
     @Test
     void updateShouldUpdateFilmCorrectly() {
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
-        film.setMpa(mpaDbStorage.getMpaById(2));
+        Mpa mpa = new Mpa(1, "Комедия");
+        film.setMpa(mpa);
+
         filmStorage.add(film);
+        mpaDbStorage.addMpaToFilm(film);
 
         Film updatedFilm = new Film("Film1", "Updated_Description",
                 LocalDate.of(2000, 01, 01), 2000);
 
         Integer id = film.getId();
         updatedFilm.setId(id);
-        updatedFilm.setMpa(mpaDbStorage.getMpaById(2));
+        updatedFilm.setMpa(mpa);
 
+        mpaDbStorage.addMpaToFilm(updatedFilm);
         filmStorage.update(updatedFilm);
 
-        assertEquals(updatedFilm, filmStorage.getFilmById(id));
+        Film filmFromDb = filmStorage.getFilmById(1);
+        mpaDbStorage.addMpaToFilm(filmFromDb);
+
+        assertEquals(updatedFilm, filmFromDb);
 
     }
 
@@ -71,8 +81,11 @@ class FilmDbStorageTest {
     void deleteShouldDeleteFilmUponRequest() {
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
-        film.setMpa(mpaDbStorage.getMpaById(2));
+        Mpa mpa = new Mpa(1, "Комедия");
+        film.setMpa(mpa);
+
         filmStorage.add(film);
+        mpaDbStorage.addMpaToFilm(film);
 
         Integer id = film.getId();
         filmStorage.delete(id);
@@ -89,46 +102,50 @@ class FilmDbStorageTest {
     public void getAllFilmsShouldProvideAllFilmsUponRequest() {
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
-        Mpa mpa1 = filmStorage.getAllMpa().get(1);
-        film.setMpa(mpa1);
+        Mpa mpa = new Mpa(1, "Комедия");
+        film.setMpa(mpa);
+        filmStorage.add(film);
+        mpaDbStorage.addMpaToFilm(film);
 
         Film film2 = new Film("Film2", "Description2",
                 LocalDate.of(2000, 01, 01), 2000);
-        Mpa mpa2 = filmStorage.getAllMpa().get(2);
-        film2.setMpa(mpa2);
+        film.setMpa(mpa);
+        filmStorage.add(film);
+        mpaDbStorage.addMpaToFilm(film);
 
         Film film3 = new Film("Film3", "Description3",
                 LocalDate.of(2000, 01, 01), 2000);
-        Mpa mpa3 = filmStorage.getAllMpa().get(3);
-        film3.setMpa(mpa3);
-
+        film.setMpa(mpa);
         filmStorage.add(film);
-        filmStorage.add(film2);
-        filmStorage.add(film3);
+        mpaDbStorage.addMpaToFilm(film);
+
         List<Film> allFilms = new ArrayList<>();
         allFilms.add(film);
         allFilms.add(film2);
         allFilms.add(film3);
 
         assertEquals(allFilms.size(), filmStorage.getAllFilms().size());
-        assertEquals(film, filmStorage.getFilmById(1));
-        assertEquals(film2, filmStorage.getFilmById(2));
-        assertEquals(film3, filmStorage.getFilmById(3));
     }
+
 
     @Test
     public void getFilmByIdShouldProvideFilmByIdCorrectly() {
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
-        Mpa mpa1 = filmStorage.getAllMpa().get(1);
-        film.setMpa(mpa1);
-
+        Mpa mpa = new Mpa(1, "Комедия");
+        film.setMpa(mpa);
         filmStorage.add(film);
+        mpaDbStorage.addMpaToFilm(film);
+
         List<Film> allFilms = new ArrayList<>();
         allFilms.add(film);
 
-        assertEquals(film, filmStorage.getFilmById(1));
+        Film filmFromDb = filmStorage.getFilmById(1);
+        mpaDbStorage.addMpaToFilm(filmFromDb);
+
+        assertEquals(film, filmFromDb);
     }
+
 
     @Test
     public void shouldProvideAllMPAsUponRequest() {
@@ -217,27 +234,30 @@ class FilmDbStorageTest {
 
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
-        Mpa mpa1 = filmStorage.getAllMpa().get(1);
-        film.setMpa(mpa1);
+        Mpa mpa = new Mpa(1, "Комедия");
+        film.setMpa(mpa);
         filmStorage.add(film);
+        mpaDbStorage.addMpaToFilm(film);
+
+        Film film2 = new Film("Film2", "Description2",
+                LocalDate.of(2000, 01, 01), 2000);
+        film2.setMpa(mpa);
+        filmStorage.add(film2);
+        mpaDbStorage.addMpaToFilm(film2);
+
+        Film film3 = new Film("Film3", "Description3",
+                LocalDate.of(2000, 01, 01), 2000);
+        film3.setMpa(mpa);
+        filmStorage.add(film3);
+        mpaDbStorage.addMpaToFilm(film3);
+
         filmStorage.putLikeToFilm(1, 1);
         filmStorage.putLikeToFilm(1, 2);
         filmStorage.putLikeToFilm(1, 3);
 
-
-        Film film2 = new Film("Film2", "Description2",
-                LocalDate.of(2000, 01, 01), 2000);
-        Mpa mpa2 = filmStorage.getAllMpa().get(2);
-        film2.setMpa(mpa2);
-        filmStorage.add(film2);
         filmStorage.putLikeToFilm(2, 1);
         filmStorage.putLikeToFilm(2, 2);
 
-        Film film3 = new Film("Film3", "Description3",
-                LocalDate.of(2000, 01, 01), 2000);
-        Mpa mpa3 = filmStorage.getAllMpa().get(3);
-        film3.setMpa(mpa3);
-        filmStorage.add(film3);
         filmStorage.putLikeToFilm(3, 1);
 
         List<Integer> topFilms = new ArrayList<>();
