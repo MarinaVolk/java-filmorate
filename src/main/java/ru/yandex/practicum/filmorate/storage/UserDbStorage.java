@@ -22,13 +22,13 @@ import java.util.Set;
  * Description:
  */
 @Component
-@Qualifier("DbUserStorage")
-public class DbUserStorage implements UserStorage {
+@Qualifier("UserDbStorage")
+public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     private final UserValidator validator = new UserValidator();
 
     @Autowired
-    public DbUserStorage(JdbcTemplate jdbcTemplate) {
+    public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -138,10 +138,9 @@ public class DbUserStorage implements UserStorage {
                 usersIds.add(newInt);
             }
         } catch (NotFoundException e) {
-            System.out.println("Отсутствуют друзья.");
+            throw new NotFoundException("Отсутствуют данные о друзьях пользователя по указанному ID в БД.");
         }
         return usersIds;
-
     }
 
 
@@ -156,7 +155,7 @@ public class DbUserStorage implements UserStorage {
                 usersIds.add(newInt);
             }
         } catch (NotFoundException e) {
-            System.out.println("Отсутствуют лайки к этому фильму.");
+            throw new NotFoundException("Отсутствуют данные о лайках пользователей к фильму по указанному ID в БД.");
         }
         return usersIds;
     }
@@ -168,9 +167,9 @@ public class DbUserStorage implements UserStorage {
 
     // добавление 1 друга в список друзей в БД
     public void addFriend(Integer id, Integer friendId) {
-        if (id < 1 || friendId < 1) {
+        /*if (id < 1 || friendId < 1) {
             throw new NotFoundException("ID не может быть отрицательным.");
-        }
+        }*/
         Set<Integer> friendsOfUser1 = getFriendListById(id);
 
         if (friendsOfUser1.contains(friendId)) {

@@ -7,7 +7,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.DbFilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.MpaDbStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.*;
@@ -23,18 +25,23 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
-    private final DbFilmStorage filmStorage;
+    private final FilmDbStorage filmStorage;
+    private final GenreDbStorage genreDbStorage;
+    private final MpaDbStorage mpaDbStorage;
     private final FilmValidator validator;
 
     @Autowired
-    public FilmService(DbFilmStorage filmStorage) {
+    public FilmService(FilmDbStorage filmStorage, GenreDbStorage genreDbStorage, MpaDbStorage mpaDbStorage) {
         this.filmStorage = filmStorage;
+        this.genreDbStorage = genreDbStorage;
+        this.mpaDbStorage = mpaDbStorage;
         validator = new FilmValidator();
     }
 
     public Film add(Film film) {
         validator.isValid(film);
         filmStorage.add(film);
+        genreDbStorage.saveGenresListByFilm(film);
         return film;
     }
 
@@ -45,11 +52,25 @@ public class FilmService {
     }
 
     public List<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        List<Film> films = filmStorage.getAllFilms(); // без проставления доп полей
+        // проставление жанров
+        genreDbStorage.addGenresToListOfFilms(films);
+        // проставление лайков
+        filmStorage.addLikesToListOfFilms(films);
+        // проставление Мра
+        mpaDbStorage.addMpaToListOfFilms(films);
+
+        return films;
     }
 
     public Film getFilmById(Integer id) {
-        return filmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id); // без проставления доп полей
+        genreDbStorage.getGenresOfOneFilm(film);
+        // проставление лайков
+        filmStorage.addLikesToFilms(film);
+        // проставление Мра
+        mpaDbStorage.addMpaToFilm(film);
+        return film;
     }
 
     public void addLike(Integer filmId, Integer userId) {
@@ -64,8 +85,6 @@ public class FilmService {
             throw new AlreadyLikedException("Пользователь уже поставил лайк этому фильму.");
         }
         filmStorage.putLikeToFilm(filmId, userId);
-        /*likes.add(userId);
-        filmStorage.update(film);*/
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
@@ -73,13 +92,12 @@ public class FilmService {
             throw new NotFoundException("Такого фильма не существует.");
         }
         Film film = filmStorage.getFilmById(filmId);
+        filmStorage.addLikesToFilms(film); //
 
         if (!film.getLikes().contains(userId)) {
             throw new NotFoundException("Этот пользователь не ставил лайк этому фильму.");
         }
         filmStorage.dislikeFilm(userId, filmId);
-        /*film.getLikes().remove(userId);
-        filmStorage.update(film);*/
     }
 
     public List<Film> getTopFilms(int count) {
@@ -88,15 +106,7 @@ public class FilmService {
             allFilms = getMostPopularFilm();
         } else {
             allFilms = filmStorage.getAllFilms();
-
-        /*List<Integer> topFilmsIds = filmStorage.getTopFilms(count);
-
-        for (Integer filmId: topFilmsIds) {
-            Film film = filmStorage.getFilmById(filmId);
-            allFilms.add(film);
-        }*/
-
-
+            mpaDbStorage.addMpaToListOfFilms(allFilms);
             Collections.sort(allFilms, new FilmComparator());
             List<Film> top10Films = allFilms
                     .stream()
@@ -109,10 +119,8 @@ public class FilmService {
     public List<Film> getMostPopularFilm() {
         List<Film> allFilms = new ArrayList<>();
         List<Integer> ids = filmStorage.getMostPopular();
-        //filmStorage.getFilmById(ids.get(0));
         allFilms.add(filmStorage.getFilmById(ids.get(0)));
         return allFilms;
-
     }
 
     public List<Mpa> findAllMpa() {
@@ -120,15 +128,11 @@ public class FilmService {
     }
 
     public Mpa getMpaById(Integer id) {
-        List<Mpa> allMpa = findAllMpa();
-        if (id > allMpa.size() || id < 1) {
-            throw new NotFoundException("Некорректный Id рейтинга");
-        }
-        return allMpa.stream().filter(x -> x.getId() == id).findFirst().get();
+        return mpaDbStorage.getMpaById(id);
     }
 
     public List<Genre> findAllGenres() {
-        return filmStorage.getAllGenres();
+        return genreDbStorage.getAllGenres();
     }
 
     public Genre getGenreById(Integer id) {

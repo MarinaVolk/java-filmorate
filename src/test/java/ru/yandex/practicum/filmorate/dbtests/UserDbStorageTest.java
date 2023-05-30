@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.DbFilmStorage;
-import ru.yandex.practicum.filmorate.storage.DbUserStorage;
+import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Qualifier
-// тесты для DbUserStorageDao
+// тесты для UserDbStorageDao
 
-class FilmorateApplicationTestDbUsers {
-    private final DbUserStorage userStorage;
-    private final DbFilmStorage filmStorage;
+class UserDbStorageTest {
+    private final UserDbStorage userStorage;
+    private final FilmDbStorage filmStorage;
 
     @Test
     public void addUserShouldAddUserCorrectly() {

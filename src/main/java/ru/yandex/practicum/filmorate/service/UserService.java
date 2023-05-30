@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyLikedException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.DbUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import java.util.ArrayList;
@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final DbUserStorage userStorage;
+    private final UserDbStorage userStorage;
     private final UserValidator validator;
 
     @Autowired
-    public UserService(DbUserStorage userStorage) {
+    public UserService(UserDbStorage userStorage) {
         this.userStorage = userStorage;
         validator = new UserValidator();
     }

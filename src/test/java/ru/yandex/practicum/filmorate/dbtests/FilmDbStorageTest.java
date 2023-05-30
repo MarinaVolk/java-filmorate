@@ -10,8 +10,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.DbFilmStorage;
-import ru.yandex.practicum.filmorate.storage.DbUserStorage;
+import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.MpaDbStorage;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,16 +27,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Qualifier
 
-class FilmorateApplicationTestDbFilms {
-    private final DbUserStorage userStorage;
-    private final DbFilmStorage filmStorage;
+class FilmDbStorageTest {
+    private final UserDbStorage userStorage;
+    private final FilmDbStorage filmStorage;
+    private final GenreDbStorage genreStorage;
+    private final MpaDbStorage mpaDbStorage;
 
     @Test
     void addShouldAddFilmCorrectly() {
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
 
-        film.setMpa(filmStorage.getMpaById(1));
+        film.setMpa(mpaDbStorage.getMpaById(1));
         filmStorage.add(film);
 
         System.out.println(filmStorage.getFilmById(1));
@@ -47,7 +51,7 @@ class FilmorateApplicationTestDbFilms {
     void updateShouldUpdateFilmCorrectly() {
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
-        film.setMpa(filmStorage.getMpaById(2));
+        film.setMpa(mpaDbStorage.getMpaById(2));
         filmStorage.add(film);
 
         Film updatedFilm = new Film("Film1", "Updated_Description",
@@ -55,7 +59,7 @@ class FilmorateApplicationTestDbFilms {
 
         Integer id = film.getId();
         updatedFilm.setId(id);
-        updatedFilm.setMpa(filmStorage.getMpaById(2));
+        updatedFilm.setMpa(mpaDbStorage.getMpaById(2));
 
         filmStorage.update(updatedFilm);
 
@@ -67,7 +71,7 @@ class FilmorateApplicationTestDbFilms {
     void deleteShouldDeleteFilmUponRequest() {
         Film film = new Film("Film1", "Description",
                 LocalDate.of(2000, 01, 01), 2000);
-        film.setMpa(filmStorage.getMpaById(2));
+        film.setMpa(mpaDbStorage.getMpaById(2));
         filmStorage.add(film);
 
         Integer id = film.getId();
@@ -155,9 +159,9 @@ class FilmorateApplicationTestDbFilms {
         allMpas.add(mpa5);
 
         assertEquals(allMpas.size(), filmStorage.getAllMpa().size());
-        assertEquals(mpa1, filmStorage.getMpaById(1));
-        assertEquals(mpa2, filmStorage.getMpaById(2));
-        assertEquals(mpa3, filmStorage.getMpaById(3));
+        assertEquals(mpa1, mpaDbStorage.getMpaById(1));
+        assertEquals(mpa2, mpaDbStorage.getMpaById(2));
+        assertEquals(mpa3, mpaDbStorage.getMpaById(3));
         assertEquals(allMpas, filmStorage.getAllMpa());
     }
 
@@ -195,10 +199,10 @@ class FilmorateApplicationTestDbFilms {
         allGenres.add(genre6);
 
         assertEquals(allGenres.size(), filmStorage.getAllGenres().size());
-        assertEquals(genre1, filmStorage.getGenreById(1));
-        assertEquals(genre2, filmStorage.getGenreById(2));
-        assertEquals(genre3, filmStorage.getGenreById(3));
-        assertEquals(allGenres, filmStorage.getAllGenres());
+        assertEquals(genre1, genreStorage.getGenreById(1));
+        assertEquals(genre2, genreStorage.getGenreById(2));
+        assertEquals(genre3, genreStorage.getGenreById(3));
+        assertEquals(allGenres, genreStorage.getAllGenres());
     }
 
     @Test
