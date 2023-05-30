@@ -101,6 +101,8 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql3, id);
     }
 
+
+
     // метод формирует список фильмов с проставленными данными о жанрах, лайках и МРА
     // для методов GET: getAllFilms() getFilmById()
     // действия по проставлению этих данных в фильмы при формировании списка
