@@ -106,6 +106,7 @@ public class FilmDbStorage implements FilmStorage {
     // действия по проставлению этих данных в фильмы при формировании списка
     // вынесена в этот отдельный метод для удобства
 
+    /*
     private Map<Integer, Film> filmProcessor(SqlRowSet rowSet) {
         List<Integer> filmIdList = new ArrayList<>();
         Map<Integer, Film> films = new HashMap<>();
@@ -154,7 +155,7 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
         return films;
-    }
+    } */
 
 
     @Override
