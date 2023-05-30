@@ -102,7 +102,7 @@ public class UserDbStorage implements UserStorage {
                 users.add(user);
             }
         } catch (NotFoundException e) {
-            System.out.println("Отсутствуют пользователи в БД.");
+            throw new NotFoundException("Отсутствуют пользователи в БД.");
         }
         return users;
     }
@@ -167,12 +167,9 @@ public class UserDbStorage implements UserStorage {
 
     // добавление 1 друга в список друзей в БД
     public void addFriend(Integer id, Integer friendId) {
-        /*if (id < 1 || friendId < 1) {
-            throw new NotFoundException("ID не может быть отрицательным.");
-        }*/
-        Set<Integer> friendsOfUser1 = getFriendListById(id);
+        Boolean friendIsIntheFriendlist = containsFriend(id, friendId);
 
-        if (friendsOfUser1.contains(friendId)) {
+        if (friendIsIntheFriendlist) {
             throw new AlreadyLikedException("Пользователь уже есть в друзьях.");
         }
 
@@ -183,6 +180,16 @@ public class UserDbStorage implements UserStorage {
     private boolean contains(Integer id) {
         String sql = "SELECT * FROM USERS WHERE user_id = ?";
         return jdbcTemplate.queryForRowSet(sql, id).next();
+    }
+
+    private boolean containsFriend(Integer id, Integer friendId) {
+        Boolean result = false;
+        String sql = "SELECT user2_id FROM USER_FRIENDSHIP WHERE user_id = ? AND user2_id = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, friendId);
+        if (rowSet.next()) {
+            result = true;
+        }
+        return result;
     }
 
 }

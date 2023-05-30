@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 @Qualifier("GenreDbStorage")
 public class GenreDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final FilmValidator validator = new FilmValidator();
 
     @Autowired
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
@@ -206,7 +204,7 @@ public class GenreDbStorage implements FilmStorage {
     }
 
 
-    // вынесено из процессора
+    // добавляем жанры к списку фильмов при сборе фильмов из БД (для метода GET)
     public List<Film> addGenresToListOfFilms(List<Film> films) {
         // накапливаем Ids фильмов
         List<Integer> filmIdList = new ArrayList<>();
@@ -214,7 +212,6 @@ public class GenreDbStorage implements FilmStorage {
             filmIdList.add(film.getId());
         }
         // получаем для списка фильмов список жанров
-        // из процессора
         Map<Integer, List<Genre>> filmGenres = getGenresSetIdBySeveralFilmIds(filmIdList);
         // цикл по фильмам - дозаполняем поля...
         for (Film film: films) {
@@ -227,7 +224,7 @@ public class GenreDbStorage implements FilmStorage {
         return films;
 }
 
-    // вынесено из процессора
+    /// добавляем жанры к 1 фильму при получении фильма из БД (для метода GET)
     public Film getGenresOfOneFilm(Film film) {
         String sql = String.format("" +
                 "SELECT t.film_id, t.genre_id, r.name " +
@@ -270,7 +267,5 @@ public class GenreDbStorage implements FilmStorage {
         }
         return film;
     }
-
-
 
 }

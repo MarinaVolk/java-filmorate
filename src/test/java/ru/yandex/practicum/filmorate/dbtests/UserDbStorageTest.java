@@ -81,7 +81,6 @@ class UserDbStorageTest {
         allUsers.add(user2);
         allUsers.add(user3);
 
-        //assertEquals(allUsers.size(), userStorage.getAllUsers().size());
         assertEquals(user1, userStorage.getUserById(user1.getId()));
         assertEquals(user2, userStorage.getUserById(user2.getId()));
         assertEquals(user3, userStorage.getUserById(user3.getId()));

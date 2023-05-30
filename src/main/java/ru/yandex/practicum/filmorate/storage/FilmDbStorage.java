@@ -58,9 +58,6 @@ public class FilmDbStorage implements FilmStorage {
             id = rs.getInt("film_id");
         }
         film.setId(id);
-
-        //genreDbStorage.saveGenresListByFilm(film);
-
         return film;
     }
 
@@ -100,74 +97,12 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql3, id);
     }
 
-
-
-    // метод формирует список фильмов с проставленными данными о жанрах, лайках и МРА
-    // для методов GET: getAllFilms() getFilmById()
-    // действия по проставлению этих данных в фильмы при формировании списка
-    // вынесена в этот отдельный метод для удобства
-
-    /*
-    private Map<Integer, Film> filmProcessor(SqlRowSet rowSet) {
-        List<Integer> filmIdList = new ArrayList<>();
-        Map<Integer, Film> films = new HashMap<>();
-
-        // получаем список фильмов
-        boolean filmFound = false;
-        while (rowSet.next()) {
-            filmFound = true;
-            Film film = new Film(
-                    rowSet.getString("name"),
-                    rowSet.getString("description"),
-                    rowSet.getDate("releaseDate").toLocalDate(),
-                    rowSet.getInt("duration"));
-            film.setId(rowSet.getInt("film_id"));
-
-            films.put(film.getId(), film);
-            // отдельно накапливаем список фильмов для запросов
-            filmIdList.add(film.getId());
-        }
-
-        if (filmFound) {
-
-            // получаем для списка фильмов список жанров
-            Map<Integer, List<Genre>> filmGenres = genreDbStorage.getGenresSetIdBySeveralFilmIds(filmIdList);
-            // получаем для списка фильмов список лайков
-            Map<Integer, Set<Integer>> filmLikes = getLikesSetBySeveralFilmIds(filmIdList);
-            // получаем для списка фильмов список mpa
-            Map<Integer, List<Mpa>> filmMpas = mpaDbStorage.getMpasSetBySeveralFilmIds(filmIdList);
-
-
-            // цикл по фильмам - дозаполняем поля...
-            for (Map.Entry<Integer, Film> entry : films.entrySet()) {
-                Film film = entry.getValue();
-
-                if (filmGenres.size() > 0) {
-                    film.setGenres(filmGenres.get(film.getId()));
-                } else {
-                    film.setGenres(new ArrayList<>());
-                }
-                if (filmLikes.size() > 0) {
-                    film.setLikes(filmLikes.get(film.getId()));
-                } else {
-                    film.setLikes(new HashSet<>());
-                }
-                film.setMpa(filmMpas.get(film.getId()).get(0));
-            }
-        }
-        return films;
-    } */
-
-
     @Override
     public List<Film> getAllFilms() {
         String sql = "SELECT * FROM FILMS";
         // запрос к БД
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
 
-        // вместо строчки переносим из процессора
-        //Map<Integer, Film> films = filmProcessor(rowSet);
-        //List<Integer> filmIdList = new ArrayList<>();
         Map<Integer, Film> films = new HashMap<>();
 
         // получаем список фильмов
@@ -182,10 +117,7 @@ public class FilmDbStorage implements FilmStorage {
             film.setId(rowSet.getInt("film_id"));
 
             films.put(film.getId(), film);
-            // отдельно накапливаем список фильмов для запросов
-            //filmIdList.add(film.getId());
         }
-
         // из Map -> List
         return new ArrayList<>(films.values());
     }
@@ -194,7 +126,6 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilmById(Integer id) {
         String sql = "SELECT * FROM FILMS WHERE film_id = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
-        //Map<Integer, Film> films = filmProcessor(rowSet);
         Map<Integer, Film> films = new HashMap<>();
         // получаем список фильмов
         boolean filmFound = false;
@@ -208,8 +139,6 @@ public class FilmDbStorage implements FilmStorage {
             film.setId(rowSet.getInt("film_id"));
 
             films.put(film.getId(), film);
-            // отдельно накапливаем список фильмов для запросов
-            //filmIdList.add(film.getId());
         }
 
         if (films.size() == 0) {
@@ -239,31 +168,6 @@ public class FilmDbStorage implements FilmStorage {
         return mpas;
     }
 
-
-/*
-    public Mpa getMpaById(Integer id) {
-        String sql = "SELECT * FROM MPA WHERE rating_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
-        Mpa mpa;
-        if (rowSet.next()) {
-            mpa = new Mpa(
-                    rowSet.getInt("rating_id"),
-                    rowSet.getString("name"));
-        } else {
-            throw new NotFoundException("Отсутствуют данные в БД по указанному ID.");
-        }
-        return mpa;
-    }
-*/
-
-
-    /*
-    public void setMpaById(Integer id, Film film) {
-        film.setMpa(getMpaById(id));
-        update(film);
-    }*/
-
-
     @Override
     public List<Genre> getAllGenres() {
         String sql = "SELECT * FROM GENRES";
@@ -284,72 +188,6 @@ public class FilmDbStorage implements FilmStorage {
         return genres;
     }
 
-
-
-
-    /*public Genre getGenreById(Integer id) {
-        String sql = "SELECT * FROM GENRES WHERE genre_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
-        Genre genre;
-        if (rowSet.next()) {
-            genre = new Genre(
-                    rowSet.getInt("genre_id"),
-                    rowSet.getString("name"));
-        } else {
-            throw new NotFoundException("Отсутствуют данные в БД по указанному ID.");
-        }
-        return genre;
-    }*/
-
-    /**
-     * Получаем все жанры для каждого фильма.
-     *
-     * @param
-     * @return Мап film_id: [Genre]
-     */
-    /*public Map<Integer, List<Genre>> getGenresSetIdBySeveralFilmIds(List<Integer> filmIds) {
-        String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
-        String sql = String.format("" +
-                "SELECT t.film_id, t.genre_id, r.name " +
-                "FROM GENRESLIST as t " +
-                "LEFT JOIN GENRES as r " +
-                "ON t.genre_id = r.genre_id " +
-                "WHERE t.film_id IN (%s)", inSql);
-
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, filmIds.toArray());
-        Map<Integer, Genre> uniqueGenres = new HashMap<>();
-        Map<Integer, List<Genre>> result = new HashMap<>();
-
-        try {
-            while (rowSet.next()) {
-
-                Integer filmId = rowSet.getInt("film_id");
-                Integer genreId = rowSet.getInt("genre_id");
-                String genreName = rowSet.getString("name");
-
-                // заполняем список уникальных жанров
-                // чтобы не плодить экземпляры классов с одинаковым содержанием
-                if (!uniqueGenres.containsKey(genreId)) {
-                    uniqueGenres.put(genreId, new Genre(genreId, genreName));
-                }
-
-                // для каждого нового фильма делаем заглушку - пустой список жанров
-                if (!result.containsKey(filmId)) {
-                    List<Genre> genreList = new ArrayList<>();
-                    result.put(filmId, genreList);
-                }
-
-                // добавляем жанр к фильму
-                result.get(filmId).add(uniqueGenres.get(genreId));
-                result.get(filmId).sort(Comparator.comparingInt(Genre::getId));
-            }
-        } catch (NotFoundException e) {
-            System.out.println("Отсутствуют жанры у этого фильма.");
-        }
-        return result;
-    }  */
-
-
     // метод для проставления лайков списку фильмов
     public List<Film> addLikesToListOfFilms(List<Film> films) {
         // накапливаем Ids фильмов
@@ -360,7 +198,7 @@ public class FilmDbStorage implements FilmStorage {
         // получаем для списка фильмов список лайков
         Map<Integer, Set<Integer>> filmLikes = getLikesSetBySeveralFilmIds(filmIdList);
 
-        for (Film film: films) {
+        for (Film film : films) {
             if (filmLikes.size() > 0) {
                 film.setLikes(filmLikes.get(film.getId()));
             } else {
@@ -409,127 +247,8 @@ public class FilmDbStorage implements FilmStorage {
         } catch (NotFoundException e) {
             System.out.println("Отсутствуют лайки у этого фильма.");
         }
-
         return result;
     }
-
-
-
-    /*
-    // получаем все MPA для каждого фильма
-    public Map<Integer, List<Mpa>> getMpasSetBySeveralFilmIds(List<Integer> filmIds) {
-        String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
-        String sql = String.format("" +
-                "SELECT " +
-                "t.film_id, r.rating_id, r.name " +
-                "FROM FILMS as t " +
-                "LEFT JOIN MPA as r " +
-                "ON t.rating_id = r.rating_id " +
-                "WHERE t.film_id IN (%s)", inSql);
-
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, filmIds.toArray());
-        Map<Integer, Mpa> uniqueMPAs = new HashMap<>();
-        Map<Integer, List<Mpa>> result = new HashMap<>();
-
-        try {
-            while (rowSet.next()) {
-
-                Integer filmId = rowSet.getInt("film_id");
-                Integer mpaId = rowSet.getInt("rating_id");
-                String mpaName = rowSet.getString("name");
-
-                // заполняем список уникальных жанров
-                // чтобы не плодить экземпляры классов с одинаковым содержанием
-                if (!uniqueMPAs.containsKey(mpaId)) {
-                    uniqueMPAs.put(mpaId, new Mpa(mpaId, mpaName));
-                }
-
-                // для каждого нового фильма делаем заглушку - пустой список MPA
-                if (!result.containsKey(filmId)) {
-                    List<Mpa> mpaList = new ArrayList<>();
-                    result.put(filmId, mpaList);
-                }
-
-                // добавляем MPA к фильму
-                result.get(filmId).add(uniqueMPAs.get(mpaId));
-            }
-        } catch (NotFoundException e) {
-            System.out.println("Отсутствуют MPA у этого фильма.");
-        }
-        return result;
-    }  */
-
-    /*public void deleteFromGenresList(Integer id) {
-        String sql = "DELETE FROM GENRESLIST WHERE film_id = ?";
-        jdbcTemplate.update(sql, id);
-    }*/
-
-    /*
-    public void setGenreById(Integer id, Film film) {
-        Genre genre = getGenreById(id);
-        List<Genre> filmsGenres = film.getGenres();
-        filmsGenres.add(genre);
-        update(film);
-    }
-    */
-
-
-    /*
-    public void saveGenresListByFilm(Film film) {
-        List<Integer> filmIds = new ArrayList<>();
-        filmIds.add(film.getId());
-        // данные о жанрах из БД
-        Map<Integer, List<Genre>> mapAsIs = getGenresSetIdBySeveralFilmIds(filmIds);
-        List<Genre> genresAsIsList;
-        if (mapAsIs.containsKey(film.getId())) {
-            genresAsIsList = mapAsIs.get(film.getId());
-        } else {
-            genresAsIsList = new ArrayList<>();
-        }
-
-        Map<Integer, Genre> genresAsIsMap = new HashMap<>();
-        for (Genre g : genresAsIsList) {
-            genresAsIsMap.put(g.getId(), g);
-        }
-
-        // данные о жанрах из полученного на вход фильма с устранением дублей
-        List<Genre> genresToBeList = film.getGenres();
-
-        // устранить дубли из листа
-        Set<Genre> set = new HashSet<>(genresToBeList);
-        genresToBeList.clear();
-        genresToBeList.addAll(set);
-
-        Map<Integer, Genre> genresToBeMap = new HashMap<>();
-        for (Genre g : genresToBeList) {
-            genresToBeMap.put(g.getId(), g);
-        }
-
-
-        Set<Genre> genresToDelete = genresAsIsList
-                .stream()
-                .filter(e -> !genresToBeMap.containsKey(e.getId()))
-                .collect(Collectors.toSet());
-
-        Set<Genre> genresToInsert = genresToBeList
-                .stream()
-                .filter(e -> !genresAsIsMap.containsKey(e.getId()))
-                .collect(Collectors.toSet());
-
-        String sqlInsert = "INSERT INTO GENRESLIST (film_id, genre_id) VALUES (?, ?)";
-        String sqlDelete = "DELETE FROM GENRESLIST WHERE genre_id = ? AND film_id = ?";
-
-        for (Genre genre : genresToDelete) {
-            jdbcTemplate.update(sqlDelete, genre.getId(), film.getId());
-        }
-
-        for (Genre genre : genresToInsert) {
-            jdbcTemplate.update(sqlInsert, film.getId(), genre.getId());
-        }
-
-    }
-
-     */
 
 
     public List<Integer> getTopFilms(int count) {
