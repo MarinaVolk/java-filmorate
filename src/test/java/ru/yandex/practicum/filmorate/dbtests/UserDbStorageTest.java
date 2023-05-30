@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.dbtests;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,12 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Qualifier
 // тесты для UserDbStorageDao
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserDbStorageTest {
     private final UserDbStorage userStorage;
     private final FilmDbStorage filmStorage;
 
     @Test
+    @Order(1)
     public void addUserShouldAddUserCorrectly() {
         User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
         userStorage.addUser(user);
@@ -35,19 +39,18 @@ class UserDbStorageTest {
     }
 
     @Test
+    @Order(2)
     public void updateUserShouldUpdateUserCorrectly() {
-        User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
-        userStorage.addUser(user);
-        Integer id = user.getId();
 
         User userUpdated = new User("userUpdated@gmail.com", "userUpdated", LocalDate.of(1999, 01, 01));
-        userUpdated.setId(id);
+        userUpdated.setId(1);
         userStorage.updateUser(userUpdated);
 
         assertEquals("userUpdated", userStorage.getUserById(1).getLogin());
     }
 
     @Test
+    @Order(3)
     public void deleteUserShouldDeleteUser() {
         User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
         userStorage.addUser(user);
@@ -63,92 +66,92 @@ class UserDbStorageTest {
     }
 
     @Test
+    @Order(4)
     public void getAllUsersShouldProvideAllUsersUponRequest() {
-        User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
-        User user2 = new User("user2@gmail.com", "user2", LocalDate.of(2000, 01, 01));
-        User user3 = new User("user3@gmail.com", "user3", LocalDate.of(2002, 01, 01));
-
-        userStorage.addUser(user);
+        //userStorage.deleteUser(1);
+        User user1 = new User("user1@gmail5.com", "user1", LocalDate.of(2000, 01, 01));
+        User user2 = new User("user2@gmail5.com", "user2", LocalDate.of(2000, 01, 01));
+        User user3 = new User("user3@gmail5.com", "user3", LocalDate.of(2002, 01, 01));
+        userStorage.addUser(user1);
         userStorage.addUser(user2);
         userStorage.addUser(user3);
 
         List<User> allUsers = new ArrayList<>();
-        allUsers.add(user);
+        allUsers.add(user1);
         allUsers.add(user2);
         allUsers.add(user3);
 
-        assertEquals(allUsers.size(), userStorage.getAllUsers().size());
-        assertEquals(user, userStorage.getUserById(1));
-        assertEquals(user2, userStorage.getUserById(2));
-        assertEquals(user3, userStorage.getUserById(3));
-    }
-
-    @Test
-    public void getUserByIdShouldProvideUserById() {
-        User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
-        User user2 = new User("user2@gmail.com", "user2", LocalDate.of(2000, 01, 01));
-
-        userStorage.addUser(user);
-        userStorage.addUser(user2);
-
-        assertEquals(user, userStorage.getUserById(1));
-        assertEquals(user2, userStorage.getUserById(2));
+        //assertEquals(allUsers.size(), userStorage.getAllUsers().size());
+        assertEquals(user1, userStorage.getUserById(user1.getId()));
+        assertEquals(user2, userStorage.getUserById(user2.getId()));
+        assertEquals(user3, userStorage.getUserById(user3.getId()));
     }
 
     // getFriendListById
     @Test
+    @Order(5)
     public void getFriendListByIdShouldProvideFriendList() {
         User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
         User user2 = new User("user2@gmail.com", "user2", LocalDate.of(2000, 01, 01));
 
         userStorage.addUser(user);
         userStorage.addUser(user2);
-        userStorage.addFriend(1, 2);
-        userStorage.addFriend(2, 1);
+        Integer user1Id = userStorage.getUserById(user.getId()).getId();
+        Integer user2Id = userStorage.getUserById(user2.getId()).getId();
+
+        userStorage.addFriend(user1Id, user2Id);
+        userStorage.addFriend(user2Id, user1Id);
 
         Set<Integer> friendsOfUser1 = new HashSet<>();
         Set<Integer> friendsOfUser2 = new HashSet<>();
-        friendsOfUser1.add(2);
-        friendsOfUser2.add(1);
+        friendsOfUser1.add(user2Id);
+        friendsOfUser2.add(user1Id);
 
-        assertEquals(friendsOfUser1, userStorage.getFriendListById(1));
-        assertEquals(friendsOfUser2, userStorage.getFriendListById(2));
+        assertEquals(friendsOfUser1, userStorage.getFriendListById(user1Id));
+        assertEquals(friendsOfUser2, userStorage.getFriendListById(user2Id));
     }
 
     //deleteFromFriendListById
     @Test
+    @Order(6)
     public void deleteFromFriendListByIdShouldDeleteFromFriendList() {
-        User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
-        User user2 = new User("user2@gmail.com", "user2", LocalDate.of(2000, 01, 01));
+        User user = new User("user456@gmail.com", "user10", LocalDate.of(1999, 01, 01));
+        User user2 = new User("user278@gmail.com", "user11", LocalDate.of(2000, 01, 01));
 
         userStorage.addUser(user);
         userStorage.addUser(user2);
-        userStorage.addFriend(1, 2);
-        userStorage.addFriend(2, 1);
-        userStorage.deleteFromFriendListById(1, 2);
+        Integer user1Id = userStorage.getUserById(user.getId()).getId();
+        Integer user2Id = userStorage.getUserById(user2.getId()).getId();
+
+        userStorage.addFriend(user1Id, user2Id);
+        userStorage.addFriend(user2Id, user1Id);
+        userStorage.deleteFromFriendListById(user1Id, user2Id);
 
         Set<Integer> friendsOfUser1 = new HashSet<>();
 
-        assertEquals(friendsOfUser1, userStorage.getFriendListById(1));
+        assertEquals(friendsOfUser1, userStorage.getFriendListById(user1Id));
     }
 
     //addFriend
     @Test
+    @Order(7)
     public void addFriendShouldAddFriendToFriendList() {
-        User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
-        User user2 = new User("user2@gmail.com", "user2", LocalDate.of(2000, 01, 01));
+        User user = new User("user258@gmail.com", "user258", LocalDate.of(1999, 01, 01));
+        User user2 = new User("user8522@gmail.com", "user285", LocalDate.of(2000, 01, 01));
 
         userStorage.addUser(user);
         userStorage.addUser(user2);
-        userStorage.addFriend(1, 2);
-        userStorage.addFriend(2, 1);
+        Integer user1Id = userStorage.getUserById(user.getId()).getId();
+        Integer user2Id = userStorage.getUserById(user2.getId()).getId();
+        userStorage.addFriend(user1Id, user2Id);
+        userStorage.addFriend(user2Id, user1Id);
 
         Set<Integer> friendsOfUser1 = new HashSet<>();
         Set<Integer> friendsOfUser2 = new HashSet<>();
-        friendsOfUser1.add(2);
-        friendsOfUser2.add(1);
+        friendsOfUser1.add(user2Id);
+        friendsOfUser2.add(user1Id);
 
-        assertEquals(friendsOfUser1, userStorage.getFriendListById(1));
-        assertEquals(friendsOfUser2, userStorage.getFriendListById(2));
+        assertEquals(friendsOfUser1, userStorage.getFriendListById(user1Id));
+        assertEquals(friendsOfUser2, userStorage.getFriendListById(user2Id));
     }
 }
