@@ -33,9 +33,10 @@ class UserDbStorageTest {
     public void addUserShouldAddUserCorrectly() {
         User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
         userStorage.addUser(user);
+        Integer userId = user.getId();
 
-        assertEquals(1, userStorage.getUserById(1).getId());
-        assertEquals(user, userStorage.getUserById(1));
+        assertEquals(userId, userStorage.getUserById(userId).getId());
+        assertEquals(user, userStorage.getUserById(userId));
     }
 
     @Test
@@ -52,7 +53,7 @@ class UserDbStorageTest {
     @Test
     @Order(3)
     public void deleteUserShouldDeleteUser() {
-        User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
+        User user = new User("user7@gmail.com", "user7", LocalDate.of(1999, 01, 01));
         userStorage.addUser(user);
         Integer id = user.getId();
 
@@ -90,7 +91,7 @@ class UserDbStorageTest {
     @Test
     @Order(5)
     public void getFriendListByIdShouldProvideFriendList() {
-        User user = new User("user@gmail.com", "user", LocalDate.of(1999, 01, 01));
+        User user = new User("user96@gmail.com", "user96", LocalDate.of(1999, 01, 01));
         User user2 = new User("user2@gmail.com", "user2", LocalDate.of(2000, 01, 01));
 
         userStorage.addUser(user);
