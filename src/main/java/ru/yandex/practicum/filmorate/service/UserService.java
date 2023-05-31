@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyLikedException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import java.util.ArrayList;
@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserDbStorage userStorage;
     private final UserValidator validator;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserDbStorage userStorage) {
         this.userStorage = userStorage;
         validator = new UserValidator();
     }
@@ -66,9 +66,7 @@ public class UserService {
             throw new AlreadyLikedException("Пользователь уже есть в друзьях.");
         }
         friendsOfUser1.add(friendId);
-        friendsOfUser2.add(id);
-        userStorage.updateUser(user1);
-        userStorage.updateUser(user2);
+        userStorage.addFriend(id, friendId);
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
@@ -81,17 +79,18 @@ public class UserService {
         if (!user1.getFriends().contains(friendId)) {
             throw new NotFoundException("Этот пользователь отсутствует в списке друзей.");
         }
-        user1.getFriends().remove(friendId);
+
+        userStorage.deleteFromFriendListById(id, friendId);
+        /*user1.getFriends().remove(friendId);
         user2.getFriends().remove(id);
         userStorage.updateUser(user1);
-        userStorage.updateUser(user2);
+        userStorage.updateUser(user2);*/
     }
 
     public List<User> getAllFriendsList(Integer id) {
-        return userStorage.getUserById(id).getFriends().stream()
+        return userStorage.getFriendListById(id).stream()
                 .map(friendId -> (userStorage.getUserById(friendId)))
                 .collect(Collectors.toList());
-
     }
 
     public List<User> getCommonFriendsList(Integer id, Integer otherId) {
