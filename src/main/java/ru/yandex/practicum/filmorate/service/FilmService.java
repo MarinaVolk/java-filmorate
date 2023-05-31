@@ -57,8 +57,6 @@ public class FilmService {
         genreDbStorage.addGenresToListOfFilms(films);
         // проставление лайков
         filmStorage.addLikesToListOfFilms(films);
-        // проставление Мра
-        //mpaDbStorage.addMpaToListOfFilms(films);
 
         return films;
     }
@@ -68,8 +66,6 @@ public class FilmService {
         genreDbStorage.getGenresOfOneFilm(film);
         // проставление лайков
         filmStorage.addLikesToFilms(film);
-        // проставление Мра
-        //mpaDbStorage.addMpaToFilm(film);
         return film;
     }
 
