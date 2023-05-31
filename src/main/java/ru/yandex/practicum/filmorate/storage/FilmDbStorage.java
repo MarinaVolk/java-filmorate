@@ -99,7 +99,15 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-        String sql = "SELECT * FROM FILMS";
+        String sql = String.format("" +
+                "SELECT t.film_id, " +
+                "t.name as filmName, " +
+                "t.description, t.releaseDate, t.duration, t.rating_id, " +
+                "r.rating_id, r.name " +
+                "FROM FILMS as t " +
+                "LEFT JOIN MPA as r " +
+                "ON t.rating_id = r.rating_id ");
+
         // запрос к БД
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
 
@@ -110,11 +118,15 @@ public class FilmDbStorage implements FilmStorage {
         while (rowSet.next()) {
             filmFound = true;
             Film film = new Film(
-                    rowSet.getString("name"),
+                    rowSet.getString("filmName"),
                     rowSet.getString("description"),
                     rowSet.getDate("releaseDate").toLocalDate(),
                     rowSet.getInt("duration"));
             film.setId(rowSet.getInt("film_id"));
+            Integer mpaId = rowSet.getInt("rating_id");
+            String mpaName = rowSet.getString("name");
+
+            film.setMpa(new Mpa(mpaId, mpaName));
 
             films.put(film.getId(), film);
         }
@@ -124,20 +136,32 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Integer id) {
-        String sql = "SELECT * FROM FILMS WHERE film_id = ?";
+        String sql = String.format("" +
+                "SELECT t.film_id, " +
+                "t.name as filmName, " +
+                "t.description, t.releaseDate, t.duration, t.rating_id, " +
+                "r.rating_id, r.name " +
+                "FROM FILMS as t " +
+                "LEFT JOIN MPA as r " +
+                "ON t.rating_id = r.rating_id " +
+                "WHERE t.film_id = (%d)", id);
+
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
         Map<Integer, Film> films = new HashMap<>();
-        // получаем список фильмов
+        // получаем фильм
         boolean filmFound = false;
         while (rowSet.next()) {
             filmFound = true;
             Film film = new Film(
-                    rowSet.getString("name"),
+                    rowSet.getString("filmName"),
                     rowSet.getString("description"),
                     rowSet.getDate("releaseDate").toLocalDate(),
                     rowSet.getInt("duration"));
             film.setId(rowSet.getInt("film_id"));
+            Integer mpaId = rowSet.getInt("rating_id");
+            String mpaName = rowSet.getString("name");
 
+            film.setMpa(new Mpa(mpaId, mpaName));
             films.put(film.getId(), film);
         }
 

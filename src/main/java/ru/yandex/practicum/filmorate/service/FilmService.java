@@ -52,13 +52,13 @@ public class FilmService {
     }
 
     public List<Film> getAllFilms() {
-        List<Film> films = filmStorage.getAllFilms(); // без проставления доп полей
+        List<Film> films = filmStorage.getAllFilms();
         // проставление жанров
         genreDbStorage.addGenresToListOfFilms(films);
         // проставление лайков
         filmStorage.addLikesToListOfFilms(films);
         // проставление Мра
-        mpaDbStorage.addMpaToListOfFilms(films);
+        //mpaDbStorage.addMpaToListOfFilms(films);
 
         return films;
     }
@@ -69,7 +69,7 @@ public class FilmService {
         // проставление лайков
         filmStorage.addLikesToFilms(film);
         // проставление Мра
-        mpaDbStorage.addMpaToFilm(film);
+        //mpaDbStorage.addMpaToFilm(film);
         return film;
     }
 
