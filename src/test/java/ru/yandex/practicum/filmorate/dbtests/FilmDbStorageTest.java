@@ -47,7 +47,7 @@ class FilmDbStorageTest {
         filmStorage.add(film);
         mpaDbStorage.addMpaToFilm(film);
 
-        Film filmFromDb = filmStorage.getFilmById(1);
+        Film filmFromDb = filmStorage.getFilmById(film.getId());
         mpaDbStorage.addMpaToFilm(filmFromDb);
 
         assertEquals(film, filmFromDb);

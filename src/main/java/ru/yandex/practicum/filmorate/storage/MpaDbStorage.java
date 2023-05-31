@@ -65,7 +65,7 @@ public class MpaDbStorage implements FilmStorage {
         String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
         String sql = String.format("" +
                 "SELECT " +
-                "t.film_id, r.rating_id, r.name " +
+                "t.film_id, r.rating_id, r.name_mpa " +
                 "FROM FILMS as t " +
                 "LEFT JOIN MPA as r " +
                 "ON t.rating_id = r.rating_id " +
@@ -80,7 +80,7 @@ public class MpaDbStorage implements FilmStorage {
 
                 Integer filmId = rowSet.getInt("film_id");
                 Integer mpaId = rowSet.getInt("rating_id");
-                String mpaName = rowSet.getString("name");
+                String mpaName = rowSet.getString("name_mpa");
 
                 // заполняем список уникальных жанров
                 // чтобы не плодить экземпляры классов с одинаковым содержанием
@@ -123,7 +123,7 @@ public class MpaDbStorage implements FilmStorage {
     public Film addMpaToFilm(Film film) {
         String sql = String.format("" +
                 "SELECT " +
-                "t.film_id, r.rating_id, r.name " +
+                "t.film_id, r.rating_id, r.name_mpa " +
                 "FROM FILMS as t " +
                 "LEFT JOIN MPA as r " +
                 "ON t.rating_id = r.rating_id " +
@@ -138,7 +138,7 @@ public class MpaDbStorage implements FilmStorage {
 
                 Integer filmId = rowSet.getInt("film_id");
                 Integer mpaId = rowSet.getInt("rating_id");
-                String mpaName = rowSet.getString("name");
+                String mpaName = rowSet.getString("name_mpa");
 
                 film.setMpa(new Mpa(mpaId, mpaName));
 
@@ -160,7 +160,7 @@ public class MpaDbStorage implements FilmStorage {
             while (rowSet.next()) {
                 Mpa mpa = new Mpa(
                         rowSet.getInt("rating_id"),
-                        rowSet.getString("name"));
+                        rowSet.getString("name_mpa"));
                 mpas.add(mpa);
             }
         } catch (NotFoundException e) {
@@ -176,7 +176,7 @@ public class MpaDbStorage implements FilmStorage {
         if (rowSet.next()) {
             mpa = new Mpa(
                     rowSet.getInt("rating_id"),
-                    rowSet.getString("name"));
+                    rowSet.getString("name_mpa"));
         } else {
             throw new NotFoundException("Отсутствуют данные в БД по указанному ID.");
         }

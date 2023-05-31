@@ -101,9 +101,9 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getAllFilms() {
         String sql = String.format("" +
                 "SELECT t.film_id, " +
-                "t.name as filmName, " +
+                "t.name, " +
                 "t.description, t.releaseDate, t.duration, t.rating_id, " +
-                "r.rating_id, r.name " +
+                "r.rating_id, r.name_mpa " +
                 "FROM FILMS as t " +
                 "LEFT JOIN MPA as r " +
                 "ON t.rating_id = r.rating_id ");
@@ -118,13 +118,13 @@ public class FilmDbStorage implements FilmStorage {
         while (rowSet.next()) {
             filmFound = true;
             Film film = new Film(
-                    rowSet.getString("filmName"),
+                    rowSet.getString("name"),
                     rowSet.getString("description"),
                     rowSet.getDate("releaseDate").toLocalDate(),
                     rowSet.getInt("duration"));
             film.setId(rowSet.getInt("film_id"));
             Integer mpaId = rowSet.getInt("rating_id");
-            String mpaName = rowSet.getString("name");
+            String mpaName = rowSet.getString("name_mpa");
 
             film.setMpa(new Mpa(mpaId, mpaName));
 
@@ -138,28 +138,28 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilmById(Integer id) {
         String sql = String.format("" +
                 "SELECT t.film_id, " +
-                "t.name as filmName, " +
+                "t.name, " +
                 "t.description, t.releaseDate, t.duration, t.rating_id, " +
-                "r.rating_id, r.name " +
+                "r.rating_id, r.name_mpa " +
                 "FROM FILMS as t " +
                 "LEFT JOIN MPA as r " +
                 "ON t.rating_id = r.rating_id " +
                 "WHERE t.film_id = (%d)", id);
 
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
         Map<Integer, Film> films = new HashMap<>();
         // получаем фильм
         boolean filmFound = false;
         while (rowSet.next()) {
             filmFound = true;
             Film film = new Film(
-                    rowSet.getString("filmName"),
+                    rowSet.getString("name"),
                     rowSet.getString("description"),
                     rowSet.getDate("releaseDate").toLocalDate(),
                     rowSet.getInt("duration"));
             film.setId(rowSet.getInt("film_id"));
             Integer mpaId = rowSet.getInt("rating_id");
-            String mpaName = rowSet.getString("name");
+            String mpaName = rowSet.getString("name_mpa");
 
             film.setMpa(new Mpa(mpaId, mpaName));
             films.put(film.getId(), film);
@@ -183,7 +183,7 @@ public class FilmDbStorage implements FilmStorage {
             while (rowSet.next()) {
                 Mpa mpa = new Mpa(
                         rowSet.getInt("rating_id"),
-                        rowSet.getString("name"));
+                        rowSet.getString("name_mpa"));
                 mpas.add(mpa);
             }
         } catch (NotFoundException e) {
